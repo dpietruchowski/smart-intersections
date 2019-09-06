@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/toolbutton">
+        <file alias="quadTo.svg">icons/quadTo.svg</file>
+        <file alias="pathCreator.svg">icons/pathCreator.svg</file>
+        <file alias="moveTo.svg">icons/moveTo.svg</file>
+        <file alias="lineTo.svg">icons/lineTo.svg</file>
+        <file>icons/start.svg</file>
+        <file>icons/pause.svg</file>
+        <file>icons/world.svg</file>
+        <file>icons/loop.svg</file>
+        <file>icons/hand_grab.svg</file>
+        <file>icons/zoomOut.svg</file>
+        <file>icons/zoomIn.svg</file>
+        <file>icons/drive.svg</file>
+        <file>icons/car.svg</file>
+        <file alias="carSettings.svg">icons/carSettings.svg</file>
+        <file alias="carRemove.svg">icons/carRemove.svg</file>
+        <file alias="carAdd.svg">icons/carAdd.svg</file>
+        <file alias="carPath.svg">icons/carPath.svg</file>
+        <file alias="carPathAdd.svg">icons/carPathAdd.svg</file>
+        <file>icons/saveDoc.svg</file>
+        <file>icons/openDoc.svg</file>
+        <file>icons/newDoc.svg</file>
+        <file>icons/Edit.svg</file>
+    </qresource>
+</RCC>

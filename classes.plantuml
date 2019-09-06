@@ -1,0 +1,45 @@
+@startuml classes
+
+hide empty members
+
+
+class IntersectionScene {
+    void start(int msec = 0)
+    void stop()
+    void step()
+    void onStep()
+
+    QBasicTimer timer_;
+}
+
+QGraphicsScene <|-- IntersectionScene
+
+IntersectionScene o-- BaseItem
+
+class BaseItem {
+    void step();
+    {abstract} void onStep();
+}
+
+class CarItem {
+    void setVelocity(int velocity)
+    int getVelocity();
+
+    int velocity_;
+}
+
+QGraphicsPolygonItem <|-- CarItem
+BaseItem <|-- CarItem
+
+class PathItem {
+    void onStep();
+
+    CarItem* addCar(qreal percent, int velocity = 0);
+
+    std::vector<CarItem*> cars_;
+}
+
+QGraphicsPathItem <|-- PathItem
+BaseItem <|-- PathItem
+
+@enduml
