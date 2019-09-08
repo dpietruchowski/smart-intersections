@@ -19,6 +19,14 @@ public:
 
     IntersectionScene& getScene();
 
+    enum class View {
+        Scene,
+        Edit,
+        SceneEdit
+    };
+
+    void setView(View view);
+
 private:
     Ui::IntersectionWidget *ui;
     IntersectionScene scene_;

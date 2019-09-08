@@ -8,6 +8,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class IntersectionWidget;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -15,6 +17,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    IntersectionWidget* currentIntersectionWidget();
 
 private:
     Ui::MainWindow *ui;

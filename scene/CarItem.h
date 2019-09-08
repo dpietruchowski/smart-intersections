@@ -15,6 +15,9 @@ public:
     qreal getVelocity() const;
     qreal getDistance() const;
 
+    bool load(QXmlStreamReader& xmlStream) override;
+    void save(QXmlStreamWriter& xmlStream) const override;
+
 protected:
     void onStep() override;
 

@@ -31,6 +31,8 @@ SOURCES += \
         scene/IntersectionScene.cpp \
         main.cpp \
         MainWindow.cpp \
+        scene/PainterPath.cpp \
+        ui/IntersectionEditor.cpp \
         ui/IntersectionWidget.cpp
 
 HEADERS += \
@@ -39,10 +41,13 @@ HEADERS += \
         scene/CarPathItem.h \
         scene/IntersectionScene.h \
         MainWindow.h \ \
+        scene/PainterPath.h \
+        ui/IntersectionEditor.h \
         ui/IntersectionWidget.h
 
 FORMS += \
         MainWindow.ui \
+        ui/IntersectionEditor.ui \
         ui/IntersectionWidget.ui
 
 RESOURCES += \

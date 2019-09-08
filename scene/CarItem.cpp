@@ -29,6 +29,16 @@ qreal CarItem::getDistance() const
     return distance_;
 }
 
+bool CarItem::load(QXmlStreamReader& xmlStream)
+{
+
+}
+
+void CarItem::save(QXmlStreamWriter& xmlStream) const
+{
+
+}
+
 void CarItem::onStep()
 {
     distance_ += velocity_;
