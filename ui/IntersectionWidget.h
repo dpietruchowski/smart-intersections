@@ -4,8 +4,6 @@
 #include <memory>
 #include <QWidget>
 #include "scene/IntersectionScene.h"
-#include "modes/ModeFilter.h"
-#include "ui/IntersectionKit.h"
 
 namespace Ui {
 class IntersectionWidget;
@@ -20,14 +18,10 @@ public:
     ~IntersectionWidget();
 
     IntersectionScene& getScene();
-    ModeFilter::Mode getMode() const;
-
-    ModeFilter* setMode(ModeFilter::Mode mode);
 
 private:
     Ui::IntersectionWidget *ui;
     IntersectionScene scene_;
-    std::unique_ptr<ModeFilter> mode_;
 };
 
 #endif // INTERSECIONSUBWINDOW_H

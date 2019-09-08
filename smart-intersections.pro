@@ -25,31 +25,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++17
 
 SOURCES += \
-        modes/EditIntersectionMode.cpp \
-        modes/ModeFilter.cpp \
         scene/BaseItem.cpp \
         scene/CarItem.cpp \
         scene/CarPathItem.cpp \
         scene/IntersectionScene.cpp \
         main.cpp \
         MainWindow.cpp \
-        ui/IntersectionKit.cpp \
         ui/IntersectionWidget.cpp
 
 HEADERS += \
-        modes/EditIntersectionMode.h \
-        modes/ModeFilter.h \
         scene/BaseItem.h \
         scene/CarItem.h \
         scene/CarPathItem.h \
         scene/IntersectionScene.h \
         MainWindow.h \ \
-        ui/IntersectionKit.h \
         ui/IntersectionWidget.h
 
 FORMS += \
         MainWindow.ui \
-        ui/IntersectionKit.ui \
         ui/IntersectionWidget.ui
 
 RESOURCES += \
