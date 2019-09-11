@@ -1,6 +1,6 @@
 #include "BaseItem.h"
 
-BaseItem::BaseItem()
+BaseItem::BaseItem(int id): id_(id)
 {
 
 }

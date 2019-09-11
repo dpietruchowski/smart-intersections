@@ -32,7 +32,11 @@
      <widget class="QWidget" name="pageEditor">
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QTextEdit" name="textEdit"/>
+        <widget class="QTextEdit" name="textEdit">
+         <property name="tabStopWidth">
+          <number>40</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

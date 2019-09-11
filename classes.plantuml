@@ -19,6 +19,8 @@ IntersectionScene o-- BaseItem
 class BaseItem {
     void step();
     {abstract} void onStep();
+
+    int id;
 }
 
 class CarItem {

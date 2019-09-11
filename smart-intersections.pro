@@ -27,21 +27,23 @@ CONFIG += c++17
 SOURCES += \
         scene/BaseItem.cpp \
         scene/CarItem.cpp \
-        scene/CarPathItem.cpp \
         scene/IntersectionScene.cpp \
         main.cpp \
         MainWindow.cpp \
         scene/PainterPath.cpp \
+        scene/PathItem.cpp \
+        scene/PathNode.cpp \
         ui/IntersectionEditor.cpp \
         ui/IntersectionWidget.cpp
 
 HEADERS += \
         scene/BaseItem.h \
         scene/CarItem.h \
-        scene/CarPathItem.h \
         scene/IntersectionScene.h \
         MainWindow.h \ \
         scene/PainterPath.h \
+        scene/PathItem.h \
+        scene/PathNode.h \
         ui/IntersectionEditor.h \
         ui/IntersectionWidget.h
 

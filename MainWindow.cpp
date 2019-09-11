@@ -5,7 +5,7 @@
 #include <QMdiSubWindow>
 
 #include "scene/IntersectionScene.h"
-#include "scene/CarPathItem.h"
+#include "scene/PathItem.h"
 
 #include "ui/IntersectionWidget.h"
 

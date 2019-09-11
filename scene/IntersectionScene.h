@@ -7,7 +7,7 @@
 #include <QXmlStreamWriter>
 
 class PainterPath;
-class CarPathItem;
+class PathItem;
 
 class IntersectionScene: public QGraphicsScene
 {
@@ -17,7 +17,7 @@ public:
     void start(int msec);
     void stop();
 
-    CarPathItem* addCarPath(const PainterPath &path,
+    PathItem* addCarPath(const PainterPath &path,
                             const QPen &pen = QPen(),
                             const QBrush &brush = QBrush());
 
@@ -31,9 +31,11 @@ protected:
 
 private:
     void step();
+    int getNextId() const;
 
 private:
     QBasicTimer timer_;
+    mutable int nextId_ = 0;
 };
 
 #endif // INTERSECTIONSCENE_H

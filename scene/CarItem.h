@@ -7,6 +7,7 @@
 class CarItem: public QGraphicsPolygonItem, public BaseItem
 {
 public:
+    explicit CarItem(int id, QGraphicsItem * parent = nullptr);
     explicit CarItem(QGraphicsItem * parent = nullptr);
 
     void setVelocity(qreal velocity);

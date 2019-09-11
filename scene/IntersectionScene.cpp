@@ -5,13 +5,17 @@
 #include <QPainter>
 #include <QTimerEvent>
 #include "BaseItem.h"
-#include "CarPathItem.h"
+#include "PathItem.h"
 #include <QDebug>
 
 IntersectionScene::IntersectionScene()
 {
-    auto* p = new CarPathItem();
+    auto* p = new PathItem(getNextId());
     addItem(p);
+
+    p->addCar(getNextId(), 0, 0);
+    p->addCar(getNextId(), 0, 10);
+    p->addCar(getNextId(), 0, 50);
 }
 
 void IntersectionScene::start(int msec)
@@ -24,9 +28,9 @@ void IntersectionScene::stop()
     timer_.stop();
 }
 
-CarPathItem* IntersectionScene::addCarPath(const PainterPath& path, const QPen& pen, const QBrush& brush)
+PathItem* IntersectionScene::addCarPath(const PainterPath& path, const QPen& pen, const QBrush& brush)
 {
-    auto* carPath = new CarPathItem();
+    auto* carPath = new PathItem(getNextId());
     carPath->setPath(path);
     carPath->setPen(pen);
     carPath->setBrush(brush);
@@ -46,7 +50,7 @@ bool IntersectionScene::load(QXmlStreamReader& xmlStream)
     while (!xmlStream.atEnd()) {
         if (!xmlStream.readNextStartElement())
             break;
-        auto* p = new CarPathItem();
+        auto* p = new PathItem();
         if (!p->load(xmlStream)) {
             delete p;
             continue;
@@ -60,7 +64,7 @@ void IntersectionScene::save(QXmlStreamWriter& xmlStream) const
 {
     xmlStream.writeStartElement("intersection");
     for (QGraphicsItem* item: items()) {
-        CarPathItem* pathItem = dynamic_cast<CarPathItem*>(item);
+        PathItem* pathItem = dynamic_cast<PathItem*>(item);
         if (pathItem)
             pathItem->save(xmlStream);
     }
@@ -84,6 +88,11 @@ void IntersectionScene::step()
         if (bItem)
             bItem->step();
     }
+}
+
+int IntersectionScene::getNextId() const
+{
+    return nextId_++;
 }
 
 void IntersectionScene::onStep()
