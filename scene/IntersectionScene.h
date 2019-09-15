@@ -7,8 +7,6 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
-#include "PathNode.h"
-
 class PainterPath;
 class PathItem;
 
@@ -25,13 +23,6 @@ public:
                             const QBrush &brush = QBrush());
 
     PathItem* getPath(int id);
-    PathNode* getNode(int id);
-
-    void connectPathToNode(int pathId, int nodeId);
-    void connectNodeToPath(int nodeId, int pathId);
-
-    PathNode* createPathNode(int id);
-    void deletePathNode(int id);
 
     bool load(QXmlStreamReader& xmlStream);
     void save(QXmlStreamWriter& xmlStream) const;
@@ -47,7 +38,6 @@ private:
 
 private:
     QBasicTimer timer_;
-    std::map<int, PathNode> pathNodes_;
     mutable int nextId_ = 0;
 };
 

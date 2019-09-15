@@ -6,7 +6,6 @@
 #include <QGraphicsPathItem>
 #include "BaseItem.h"
 #include "PainterPath.h"
-#include "PathNode.h"
 
 class CarItem;
 
@@ -25,15 +24,6 @@ public:
     bool load(QXmlStreamReader& xmlStream) override;
     void save(QXmlStreamWriter& xmlStream) const override;
 
-    void connectBeginTo(PathNode* node);
-    void connectEndTo(PathNode* node);
-    bool hasBeginNode() const;
-    bool hasEndNode() const;
-    void unsetBeginNode();
-    void unsetEndNode();
-    void setBeginNode(PathNode* node);
-    void setEndNode(PathNode* node);
-
     PainterPath path() const;
     void setPath(const PainterPath &path);
 
@@ -51,8 +41,6 @@ private:
 private:
     std::list<CarItem*> cars_;
     PainterPath path_;
-    PathNode* beginNode_ = nullptr;
-    PathNode* endNode_ = nullptr;
 
 };
 

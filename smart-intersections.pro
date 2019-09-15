@@ -32,7 +32,6 @@ SOURCES += \
         MainWindow.cpp \
         scene/PainterPath.cpp \
         scene/PathItem.cpp \
-        scene/PathNode.cpp \
         ui/IntersectionEditor.cpp \
         ui/IntersectionWidget.cpp
 
@@ -43,7 +42,6 @@ HEADERS += \
         MainWindow.h \ \
         scene/PainterPath.h \
         scene/PathItem.h \
-        scene/PathNode.h \
         ui/IntersectionEditor.h \
         ui/IntersectionWidget.h
 

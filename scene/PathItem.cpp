@@ -20,8 +20,6 @@ PathItem::PathItem(QGraphicsItem* parent): PathItem(-1, parent)
 
 PathItem::~PathItem()
 {
-    unsetBeginNode();
-    unsetEndNode();
 }
 
 CarItem* PathItem::addCar(int id, qreal velocity, qreal distance)
@@ -90,77 +88,6 @@ void PathItem::save(QXmlStreamWriter& xmlStream) const
     }
     xmlStream.writeEndElement();
     xmlStream.writeEndElement();
-}
-
-void PathItem::connectBeginTo(PathNode* node)
-{
-    setBeginNode(node);
-}
-
-void PathItem::connectEndTo(PathNode* node)
-{
-    setEndNode(node);
-}
-/*
-void PathItem::ConnectTo(PathItem* nextPath)
-{
-    if (hasEndNode() && nextPath->hasBeginNode()) {
-        qWarning("Can't connect to");
-        return;
-    }
-
-    if (hasEndNode()) {
-        nextPath->setBeginNode(endNode_);
-    } else if (nextPath->hasBeginNode()) {
-        setEndNode(nextPath->beginNode_);
-    } else {
-        auto node = std::make_shared<PathNode>();
-        setEndNode(node);
-        nextPath->setBeginNode(node);
-    }
-}*/
-
-bool PathItem::hasBeginNode() const
-{
-    return beginNode_ != nullptr;
-}
-
-bool PathItem::hasEndNode() const
-{
-    return endNode_ != nullptr;
-}
-
-void PathItem::unsetBeginNode()
-{
-    if (hasBeginNode())
-        beginNode_->unregisterOutPath(getId(), this);
-    beginNode_ = nullptr;
-}
-
-void PathItem::unsetEndNode()
-{
-    if (hasEndNode())
-        endNode_->unregisterInPath(getId(), this);
-    endNode_ = nullptr;
-}
-
-
-void PathItem::setBeginNode(PathNode* node)
-{
-    unsetBeginNode();
-
-    beginNode_ = node;
-    if (node != nullptr)
-        node->registerOutPath(getId(), this);
-}
-
-void PathItem::setEndNode(PathNode* node)
-{
-    unsetEndNode();
-
-    endNode_ = node;
-    if (node != nullptr)
-        node->registerInPath(getId(), this);
 }
 
 PainterPath PathItem::path() const
