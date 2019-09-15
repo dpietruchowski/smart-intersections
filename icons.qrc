@@ -22,5 +22,8 @@
         <file>icons/openDoc.svg</file>
         <file>icons/newDoc.svg</file>
         <file>icons/Edit.svg</file>
+        <file>icons/Stop.svg</file>
+        <file>icons/Start.svg</file>
+        <file>icons/Pause.svg</file>
     </qresource>
 </RCC>

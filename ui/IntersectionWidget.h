@@ -14,7 +14,7 @@ class IntersectionWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit IntersectionWidget(QWidget *parent = nullptr);
+    explicit IntersectionWidget(const QString& name, QWidget *parent = nullptr);
     ~IntersectionWidget();
 
     IntersectionScene& getScene();
@@ -28,6 +28,7 @@ public:
     void setView(View view);
 
 private:
+    QString name_;
     Ui::IntersectionWidget *ui;
     IntersectionScene scene_;
 };

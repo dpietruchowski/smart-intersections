@@ -92,6 +92,16 @@ void PathItem::save(QXmlStreamWriter& xmlStream) const
     xmlStream.writeEndElement();
 }
 
+void PathItem::connectBeginTo(PathNode* node)
+{
+    setBeginNode(node);
+}
+
+void PathItem::connectEndTo(PathNode* node)
+{
+    setEndNode(node);
+}
+/*
 void PathItem::ConnectTo(PathItem* nextPath)
 {
     if (hasEndNode() && nextPath->hasBeginNode()) {
@@ -108,7 +118,7 @@ void PathItem::ConnectTo(PathItem* nextPath)
         setEndNode(node);
         nextPath->setBeginNode(node);
     }
-}
+}*/
 
 bool PathItem::hasBeginNode() const
 {
@@ -123,34 +133,34 @@ bool PathItem::hasEndNode() const
 void PathItem::unsetBeginNode()
 {
     if (hasBeginNode())
-        beginNode_->UnregisterNextPath(getId(), this);
+        beginNode_->unregisterOutPath(getId(), this);
     beginNode_ = nullptr;
 }
 
 void PathItem::unsetEndNode()
 {
     if (hasEndNode())
-        beginNode_->UnregisterPrevPath(getId(), this);
+        endNode_->unregisterInPath(getId(), this);
     endNode_ = nullptr;
 }
 
 
-void PathItem::setBeginNode(std::shared_ptr<PathNode>& node)
+void PathItem::setBeginNode(PathNode* node)
 {
     unsetBeginNode();
 
     beginNode_ = node;
     if (node != nullptr)
-        node->RegisterNextPath(getId(), this);
+        node->registerOutPath(getId(), this);
 }
 
-void PathItem::setEndNode(std::shared_ptr<PathNode>& node)
+void PathItem::setEndNode(PathNode* node)
 {
     unsetEndNode();
 
     endNode_ = node;
     if (node != nullptr)
-        node->RegisterPrevPath(getId(), this);
+        node->registerInPath(getId(), this);
 }
 
 PainterPath PathItem::path() const
@@ -168,9 +178,8 @@ void PathItem::onStep()
 {
     for (auto* car : cars_) {
         updateCar(car);
-        if (percentAtCar(car) >= 100) {
-            removeCar(car);
-            delete car;
+        if (percentAtCar(car) >= 1) {
+            car->setDistance(0);
         }
     }
 }
@@ -220,4 +229,5 @@ void PathItem::updateCar(CarItem* car)
     auto positionAngle = pointAtCar(car);
     car->setPos(positionAngle.first);
     car->setRotation(270-positionAngle.second);
+    qDebug() << car->getDistance();
 }

@@ -10,12 +10,6 @@
 
 IntersectionScene::IntersectionScene()
 {
-    auto* p = new PathItem(getNextId());
-    addItem(p);
-
-    p->addCar(getNextId(), 0, 0);
-    p->addCar(getNextId(), 0, 10);
-    p->addCar(getNextId(), 0, 50);
 }
 
 void IntersectionScene::start(int msec)
@@ -39,6 +33,56 @@ PathItem* IntersectionScene::addCarPath(const PainterPath& path, const QPen& pen
     return carPath;
 }
 
+PathItem* IntersectionScene::getPath(int id)
+{
+    for (QGraphicsItem* item: items()) {
+        PathItem* pathItem = dynamic_cast<PathItem*>(item);
+        if (pathItem && pathItem->getId() == id)
+            return pathItem;
+    }
+    return nullptr;
+}
+
+PathNode* IntersectionScene::getNode(int id)
+{
+    if (!pathNodes_.count(id))
+        return nullptr;
+
+    return &pathNodes_.at(id);
+}
+
+void IntersectionScene::connectPathToNode(int pathId, int nodeId)
+{
+    PathItem* path = getPath(pathId);
+    PathNode* node = getNode(nodeId);
+    path->connectEndTo(node);
+}
+
+void IntersectionScene::connectNodeToPath(int nodeId, int pathId)
+{
+    PathItem* path = getPath(pathId);
+    PathNode* node = getNode(nodeId);
+    path->connectBeginTo(node);
+}
+
+PathNode* IntersectionScene::createPathNode(int id)
+{
+    auto res = pathNodes_.emplace(id, PathNode(id, *this));
+    if (!res.second)
+        return nullptr;
+
+    PathNode& node = (*res.first).second;
+    return &node;
+}
+
+void IntersectionScene::deletePathNode(int id)
+{
+    if (!pathNodes_.count(id))
+        return;
+
+    pathNodes_.erase(id);
+}
+
 bool IntersectionScene::load(QXmlStreamReader& xmlStream)
 {
     bool res = xmlStream.readNextStartElement();
@@ -47,27 +91,51 @@ bool IntersectionScene::load(QXmlStreamReader& xmlStream)
         return false;
 
     clear();
+    pathNodes_.clear();
     while (!xmlStream.atEnd()) {
         if (!xmlStream.readNextStartElement())
             break;
-        auto* p = new PathItem();
-        if (!p->load(xmlStream)) {
-            delete p;
-            continue;
-        }
-        addItem(p);
+        if (xmlStream.name() == "roads")
+            while (xmlStream.readNextStartElement()) {
+                auto* p = new PathItem();
+                if (!p->load(xmlStream)) {
+                    delete p;
+                    continue;
+                }
+                addItem(p);
+            }
+        else if (xmlStream.name() == "nodes")
+            while (xmlStream.readNextStartElement()) {
+                int id = xmlStream.attributes().value("id").toInt();
+                auto* p = createPathNode(id);
+                if (p && !p->load(xmlStream)) {
+                    deletePathNode(id);
+                    continue;
+                }
+            }
+        else
+            xmlStream.skipCurrentElement();
     }
+
+
     return true;
 }
 
 void IntersectionScene::save(QXmlStreamWriter& xmlStream) const
 {
     xmlStream.writeStartElement("intersection");
+    xmlStream.writeStartElement("roads");
     for (QGraphicsItem* item: items()) {
         PathItem* pathItem = dynamic_cast<PathItem*>(item);
         if (pathItem)
             pathItem->save(xmlStream);
     }
+    xmlStream.writeEndElement();
+    xmlStream.writeStartElement("nodes");
+    for (const auto&[id, node]: pathNodes_) {
+        node.save(xmlStream);
+    }
+    xmlStream.writeEndElement();
     xmlStream.writeEndElement();
 }
 

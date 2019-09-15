@@ -53,7 +53,8 @@ FORMS += \
         ui/IntersectionWidget.ui
 
 RESOURCES += \
-    icons.qrc
+    icons.qrc \
+    intersections.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

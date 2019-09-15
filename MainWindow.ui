@@ -51,6 +51,9 @@
    <addaction name="actionSaveIntersection"/>
    <addaction name="separator"/>
    <addaction name="actionEditIntersection"/>
+   <addaction name="actionStart"/>
+   <addaction name="actionPause"/>
+   <addaction name="actionStop"/>
   </widget>
   <action name="actionNewIntersection">
    <property name="icon">
@@ -89,6 +92,33 @@
    </property>
    <property name="text">
     <string>EditIntersection</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/toolbutton/icons/Pause.svg</normaloff>:/toolbutton/icons/Pause.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionStart">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/toolbutton/icons/Start.svg</normaloff>:/toolbutton/icons/Start.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/toolbutton/icons/Stop.svg</normaloff>:/toolbutton/icons/Stop.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
    </property>
   </action>
  </widget>

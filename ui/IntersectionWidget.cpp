@@ -1,14 +1,25 @@
 #include "IntersectionWidget.h"
 #include "ui_IntersectionWidget.h"
 
+#include <QFile>
 #include <QStackedLayout>
 
-IntersectionWidget::IntersectionWidget(QWidget *parent) :
-    QWidget(parent),
+IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
+    QWidget(parent), name_(name),
     ui(new Ui::IntersectionWidget)
 {
     ui->setupUi(this);
     ui->graphicsView->setScene(&scene_);
+    ui->graphicsView->setMouseTracking(true);
+
+    QFile file(":/default.xml");
+    file.open(QIODevice::ReadOnly);
+    ui->textEdit->setText(file.readAll());
+    file.close();
+
+    setView(View::Scene);
+
+    setWindowTitle(name);
 }
 
 IntersectionWidget::~IntersectionWidget()
@@ -31,11 +42,11 @@ void IntersectionWidget::setView(IntersectionWidget::View view)
             break;
         }
         case View::Edit: {
-            QString str;
+            /*QString str;
             QXmlStreamWriter w(&str);
             w.setAutoFormatting(true);
             scene_.save(w);
-            ui->textEdit->setText(str);
+            ui->textEdit->setText(str);*/
             ui->stackedWidget->setCurrentIndex(1);
             break;
         }

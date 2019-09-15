@@ -1,0 +1,20 @@
+<intersection>
+    <roads>
+        <car-path id="0" x="0" y="0">
+            <path>
+                <line-to>
+                    <point x="400" y="0"/>
+                </line-to>
+                <quad-to>
+                    <point x="570" y="0"/>
+                    <point x="570" y="250"/>
+                </quad-to>
+            </path>
+            <cars>
+                <car id="1" v="1" d="0"/>
+                <car id="2" v="2" d="0"/>
+                <car id="3" v="2.5" d="0"/>
+            </cars>
+        </car-path>
+    </roads>
+</intersection>

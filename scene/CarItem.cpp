@@ -12,6 +12,7 @@ const QPolygonF carShape = QPolygonF({
 CarItem::CarItem(int id, QGraphicsItem* parent): QGraphicsPolygonItem(parent), BaseItem(id)
 {
     setPolygon(carShape);
+    auto* text = new QGraphicsTextItem(QString::number(id), this);
 }
 
 CarItem::CarItem(QGraphicsItem* parent): CarItem(-1, parent)

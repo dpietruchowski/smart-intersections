@@ -25,13 +25,14 @@ public:
     bool load(QXmlStreamReader& xmlStream) override;
     void save(QXmlStreamWriter& xmlStream) const override;
 
-    void ConnectTo(PathItem* nextPath);
+    void connectBeginTo(PathNode* node);
+    void connectEndTo(PathNode* node);
     bool hasBeginNode() const;
     bool hasEndNode() const;
     void unsetBeginNode();
     void unsetEndNode();
-    void setBeginNode(std::shared_ptr<PathNode>& node);
-    void setEndNode(std::shared_ptr<PathNode>& node);
+    void setBeginNode(PathNode* node);
+    void setEndNode(PathNode* node);
 
     PainterPath path() const;
     void setPath(const PainterPath &path);
@@ -46,11 +47,12 @@ private:
     qreal percentAtCar(const CarItem* car);
     void updateCar(CarItem* car);
 
+
 private:
     std::list<CarItem*> cars_;
     PainterPath path_;
-    std::shared_ptr<PathNode> beginNode_;
-    std::shared_ptr<PathNode> endNode_;
+    PathNode* beginNode_ = nullptr;
+    PathNode* endNode_ = nullptr;
 
 };
 
