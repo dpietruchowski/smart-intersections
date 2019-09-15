@@ -62,7 +62,6 @@ bool PainterPath::load(QXmlStreamReader& xmlStream)
 
 void PainterPath::save(QXmlStreamWriter& xmlStream) const
 {
-    xmlStream.writeStartElement("path");
     for(auto command: commands_) {
         QString commandElement;
         switch(command.first) {
@@ -83,7 +82,6 @@ void PainterPath::save(QXmlStreamWriter& xmlStream) const
         }
         xmlStream.writeEndElement();
     }
-    xmlStream.writeEndElement();
 }
 
 PainterPath::Points PainterPath::loadPoints(QXmlStreamReader& xmlStream)

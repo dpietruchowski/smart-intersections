@@ -6,10 +6,30 @@
 #include <QTimerEvent>
 #include "BaseItem.h"
 #include "PathItem.h"
+#include "CarItem.h"
 #include <QDebug>
 
 IntersectionScene::IntersectionScene()
 {
+}
+
+void IntersectionScene::reset()
+{
+    for (QGraphicsItem* item: items()) {
+        PathItem* path = dynamic_cast<PathItem*>(item);
+        if (path) {
+            path->reset();
+            continue;
+        }
+    }
+    for (QGraphicsItem* item: items()) {
+        CarItem* car = dynamic_cast<CarItem*>(item);
+        if (car) {
+            car->reset();
+            car->moveToNextPath(car->getDistance());
+            continue;
+        }
+    }
 }
 
 void IntersectionScene::start(int msec)
@@ -43,6 +63,33 @@ PathItem* IntersectionScene::getPath(int id)
     return nullptr;
 }
 
+Route* IntersectionScene::getRoute(int id)
+{
+    if (routes_.count(id) == 0)
+        return nullptr;
+
+    return &routes_.at(id);
+}
+
+Route* IntersectionScene::createRoute(int id)
+{
+    auto res = routes_.try_emplace(id, id, *this);
+    if (!res.second)
+        return nullptr;
+
+    Route& route = (*res.first).second;
+    return &route;
+}
+
+void IntersectionScene::deleteRoute(int id)
+{
+    if (routes_.count(id) == 0)
+        return;
+
+    routes_.erase(id);
+}
+
+
 bool IntersectionScene::load(QXmlStreamReader& xmlStream)
 {
     bool res = xmlStream.readNextStartElement();
@@ -51,22 +98,39 @@ bool IntersectionScene::load(QXmlStreamReader& xmlStream)
         return false;
 
     clear();
+    routes_.clear();
     while (!xmlStream.atEnd()) {
         if (!xmlStream.readNextStartElement())
             break;
         if (xmlStream.name() == "roads")
             while (xmlStream.readNextStartElement()) {
                 auto* p = new PathItem();
+                addItem(p);
                 if (!p->load(xmlStream)) {
                     delete p;
                     continue;
                 }
-                addItem(p);
+            }
+        else if (xmlStream.name() == "routes")
+            while (xmlStream.readNextStartElement()) {
+                int id = xmlStream.attributes().value("id").toInt();
+                auto* r = createRoute(id);
+                if (!r->load(xmlStream)) {
+                    deleteRoute(id);
+                }
+            }
+        else if (xmlStream.name() == "cars")
+            while (xmlStream.readNextStartElement()) {
+                auto* c = new CarItem();
+                addItem(c);
+                if (!c->load(xmlStream)) {
+                    delete c;
+                    continue;
+                }
             }
         else
             xmlStream.skipCurrentElement();
     }
-
 
     return true;
 }
@@ -80,6 +144,20 @@ void IntersectionScene::save(QXmlStreamWriter& xmlStream) const
         PathItem* pathItem = dynamic_cast<PathItem*>(item);
         if (pathItem)
             pathItem->save(xmlStream);
+    }
+    xmlStream.writeEndElement();
+
+    xmlStream.writeStartElement("routes");
+    for (auto&[id, route] : routes_) {
+        route.save(xmlStream);
+    }
+    xmlStream.writeEndElement();
+
+    xmlStream.writeStartElement("cars");
+    for (QGraphicsItem* item: items()) {
+        CarItem* car = dynamic_cast<CarItem*>(item);
+        if (car)
+            car->save(xmlStream);
     }
     xmlStream.writeEndElement();
 

@@ -46,6 +46,11 @@ MainWindow::MainWindow(QWidget *parent) :
         if (intersection)
             intersection->getScene().stop();
     });
+    connect(ui->actionStop, &QAction::triggered, [this] {
+        auto* intersection = currentIntersectionWidget();
+        if (intersection)
+            intersection->getScene().reset();
+    });
 
     connect(ui->actionSaveIntersection, &QAction::triggered, [this] {
         saveCurrentIntersection();

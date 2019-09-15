@@ -7,6 +7,8 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
+#include "Route.h"
+
 class PainterPath;
 class PathItem;
 
@@ -15,6 +17,7 @@ class IntersectionScene: public QGraphicsScene
 public:
     IntersectionScene();
 
+    void reset();
     void start(int msec = 10);
     void stop();
 
@@ -23,6 +26,10 @@ public:
                             const QBrush &brush = QBrush());
 
     PathItem* getPath(int id);
+    Route* getRoute(int id);
+
+    Route* createRoute(int id);
+    void deleteRoute(int id);
 
     bool load(QXmlStreamReader& xmlStream);
     void save(QXmlStreamWriter& xmlStream) const;
@@ -38,6 +45,7 @@ private:
 
 private:
     QBasicTimer timer_;
+    std::map<int, Route> routes_;
     mutable int nextId_ = 0;
 };
 

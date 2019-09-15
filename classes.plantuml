@@ -10,7 +10,6 @@ class IntersectionScene {
     void onStep()
 
     QBasicTimer timer_;
-    std::map<int, PathNode> pathNodes_;
 }
 
 QGraphicsScene <|-- IntersectionScene
@@ -27,9 +26,10 @@ class BaseItem {
 class CarItem {
     qreal velocity_;
     qreal distance_;
+    Route* route;
 
+    PathItem* nextPath();
     --signals--
-    void endReached();
 }
 
 BaseItem <|-- CarItem
@@ -44,13 +44,14 @@ class PathItem {
 
 BaseItem <|-- PathItem
 
-class PathNode {
+class Route {
     int id_;
-    std::map<int, PathItem*> prevPaths_;
-    std::map<int, PathItem*> nextPaths_;
+    std::list<PathItem*> paths_;
 }
 
-IntersectionScene o-- PathNode
+Route -left- PathItem
+
+CarItem::route -- Route
 
 class CarAgent {
     CarItem* car_;

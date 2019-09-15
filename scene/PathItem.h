@@ -16,8 +16,8 @@ public:
     explicit PathItem(QGraphicsItem * parent = nullptr);
     ~PathItem() override;
 
-    CarItem* addCar(int id, qreal velocity = 0, qreal distance = 0);
-    CarItem* addCar(qreal velocity = 0, qreal distance = 0);
+    void reset();
+
     void addCar(CarItem* car);
     void removeCar(CarItem* car);
 
@@ -32,7 +32,6 @@ protected:
 
 private:
     void clearCars();
-    bool loadCars(QXmlStreamReader& xmlStream);
     std::pair<QPointF, qreal> pointAtCar(const CarItem* car);
     qreal percentAtCar(const CarItem* car);
     void updateCar(CarItem* car);

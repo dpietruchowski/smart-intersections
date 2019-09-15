@@ -11,6 +11,7 @@ PathItem::PathItem(int id, QGraphicsItem* parent): QGraphicsPathItem(parent), Ba
     path.quadTo(10, 20, 20, 20);
     path.lineTo(10, 10);
     setPath(path);
+    text_ = new QGraphicsSimpleTextItem(QString::number(id), this);
 }
 
 PathItem::PathItem(QGraphicsItem* parent): PathItem(-1, parent)
@@ -22,20 +23,11 @@ PathItem::~PathItem()
 {
 }
 
-CarItem* PathItem::addCar(int id, qreal velocity, qreal distance)
+void PathItem::reset()
 {
-    CarItem* car = new CarItem(id, this);
-    car->setVelocity(velocity);
-    car->setDistance(distance);
-
-    addCar(car);
-    return car;
+    cars_.clear();
 }
 
-CarItem* PathItem::addCar(qreal velocity, qreal distance)
-{
-    return addCar(-1, velocity, distance);
-}
 
 void PathItem::addCar(CarItem* car)
 {
@@ -51,7 +43,7 @@ void PathItem::removeCar(CarItem* car)
 bool PathItem::load(QXmlStreamReader& xmlStream)
 {
     if (!xmlStream.isStartElement() ||
-            xmlStream.name() != "car-path")
+            xmlStream.name() != "path")
         return false;
 
     int id = xmlStream.attributes().value("id").toInt();
@@ -59,34 +51,20 @@ bool PathItem::load(QXmlStreamReader& xmlStream)
     qreal y = xmlStream.attributes().value("y").toDouble();
     setId(id);
     setPos(x, y);
-    while (xmlStream.readNextStartElement()) {
-        qDebug() << xmlStream.name();
-        if (xmlStream.name() == "path") {
-            PainterPath path;
-            path.load(xmlStream);
-            setPath(path);
-        } else if (xmlStream.name() == "cars") {
-            loadCars(xmlStream);
-        } else {
-            xmlStream.skipCurrentElement();
-        }
-    }
+    PainterPath path;
+    path.load(xmlStream);
+    setPath(path);
     return true;
 }
 
 void PathItem::save(QXmlStreamWriter& xmlStream) const
 {
-    xmlStream.writeStartElement("car-path");
+    xmlStream.writeStartElement("path");
     QPointF point = pos();
     xmlStream.writeAttribute("id", QString::number(getId()));
     xmlStream.writeAttribute("x", QString::number(point.x()));
     xmlStream.writeAttribute("y", QString::number(point.y()));
     path_.save(xmlStream);
-    xmlStream.writeStartElement("cars");
-    for(CarItem* car: cars_) {
-        car->save(xmlStream);
-    }
-    xmlStream.writeEndElement();
     xmlStream.writeEndElement();
 }
 
@@ -105,9 +83,20 @@ void PathItem::onStep()
 {
     for (auto* car : cars_) {
         updateCar(car);
+    }
+
+    std::vector<CarItem*> removed;
+    cars_.remove_if([this, &removed] (CarItem* car) {
         if (percentAtCar(car) >= 1) {
-            car->setDistance(0);
+            removed.push_back(car);
+            return true;
         }
+        return false;
+    });
+
+    for (auto* car : removed) {
+        if (percentAtCar(car) >= 1)
+            car->moveToNextPath();
     }
 }
 
@@ -119,29 +108,12 @@ void PathItem::clearCars()
     cars_.clear();
 }
 
-bool PathItem::loadCars(QXmlStreamReader& xmlStream)
-{
-    clearCars();
-    while (xmlStream.readNextStartElement()) {
-        if (xmlStream.name() == "car") {
-            auto* car = addCar();
-            if (!car->load(xmlStream)) {
-                delete car;
-                continue;
-            }
-            updateCar(car);
-        } else {
-            xmlStream.skipCurrentElement();
-        }
-    }
-    return true;
-}
-
 std::pair<QPointF, qreal> PathItem::pointAtCar(const CarItem* car)
 {
     QPainterPath _path = path();
     qreal percent = _path.percentAtLength(car->getDistance());
     QPointF pos = _path.pointAtPercent(percent);
+    pos += this->pos();
     qreal angle = _path.angleAtPercent(percent);
     return std::make_pair(pos, angle);
 }

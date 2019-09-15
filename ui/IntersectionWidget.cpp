@@ -38,6 +38,7 @@ void IntersectionWidget::setView(IntersectionWidget::View view)
         case View::Scene: {
             QXmlStreamReader r(ui->textEdit->toPlainText());
             scene_.load(r);
+            scene_.reset();
             ui->stackedWidget->setCurrentIndex(0);
             break;
         }

@@ -3,6 +3,7 @@
 
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
+#include <QGraphicsSimpleTextItem>
 
 class BaseItem
 {
@@ -18,10 +19,14 @@ public:
     virtual void save(QXmlStreamWriter& xmlStream) const = 0;
 
     int getId() const { return id_; }
-    void setId(int id) { id_ = id; }
+    void setId(int id);
+
 
 protected:
     virtual void onStep();
+
+protected:
+    QGraphicsSimpleTextItem* text_;
 
 private:
     int id_ = -1;
