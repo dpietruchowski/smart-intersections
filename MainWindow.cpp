@@ -8,17 +8,63 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QDebug>
+#include <QActionGroup>
 
 #include "scene/IntersectionScene.h"
 #include "scene/PathItem.h"
 
 #include "ui/IntersectionWidget.h"
 
+class ViewActionGroup : public QActionGroup
+{
+public:
+    using QActionGroup::QActionGroup;
+
+    void setAction(IntersectionWidget::View view, QAction* action) {
+        if (actions_.count(view)) {
+            removeAction(actions_[view]);
+        }
+
+        actions_[view] = action;
+        addAction(action);
+    }
+
+    void setView(IntersectionWidget::View view) {
+        if (!actions_.count(view))
+            return;
+
+        actions_.at(view)->setChecked(true);
+    }
+
+    IntersectionWidget::View getView() const {
+        QAction* checked = checkedAction();
+        if (!checked)
+            return IntersectionWidget::View::Scene;
+
+        for (auto[view, action] : actions_) {
+            if (action == checked)
+                return view;
+        }
+
+        return IntersectionWidget::View::Scene;
+    }
+
+    void uncheckAll() {
+        for (auto[view, action] : actions_) {
+            action->setChecked(false);
+        }
+    }
+
+private:
+    std::map<IntersectionWidget::View, QAction*> actions_;
+};
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->mdiArea->setViewMode(QMdiArea::TabbedView);
 
     connect(ui->actionNewIntersection, &QAction::triggered,
             [this] {
@@ -27,13 +73,37 @@ MainWindow::MainWindow(QWidget *parent) :
         window->show();
     });
 
-    connect(ui->actionEditIntersection, &QAction::triggered,
-            [this] (bool checked){
+    connect(ui->actionSaveIntersection, &QAction::triggered, [this] {
+        saveCurrentIntersection();
+    });
+
+    connect(ui->actionOpenIntersection, &QAction::triggered, [this] {
+        openIntersection();
+    });
+
+    ViewActionGroup *viewActionGroup = new ViewActionGroup(this);
+
+    viewActionGroup->setAction(IntersectionWidget::View::Edit, ui->actionEditView);
+    viewActionGroup->setAction(IntersectionWidget::View::Scene, ui->actionSceneView);
+    viewActionGroup->setAction(IntersectionWidget::View::SceneEdit, ui->actionSceneEditView);
+
+    connect(viewActionGroup, &QActionGroup::triggered, [this, viewActionGroup] {
         auto* intersection = currentIntersectionWidget();
-        if (intersection)
-                intersection->setView(checked ?
-                                          IntersectionWidget::View::Edit :
-                                          IntersectionWidget::View::Scene);
+        if (!intersection) {
+            viewActionGroup->uncheckAll();
+            return;
+        }
+
+        intersection->setView(viewActionGroup->getView());
+    });
+
+    connect(ui->mdiArea, &QMdiArea::subWindowActivated, [this, viewActionGroup] {
+        auto* intersection = currentIntersectionWidget();
+        if (intersection) {
+            viewActionGroup->setView(intersection->getView());
+        } else {
+            viewActionGroup->uncheckAll();
+        }
     });
 
     connect(ui->actionStart, &QAction::triggered, [this] {
@@ -50,10 +120,6 @@ MainWindow::MainWindow(QWidget *parent) :
         auto* intersection = currentIntersectionWidget();
         if (intersection)
             intersection->getScene().reset();
-    });
-
-    connect(ui->actionSaveIntersection, &QAction::triggered, [this] {
-        saveCurrentIntersection();
     });
 
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, [this] (QMdiSubWindow* window) {
@@ -83,24 +149,35 @@ void MainWindow::saveCurrentIntersection()
     if (!currInterwidget)
         return;
 
+    if (currInterwidget->fileExists()) {
+        currInterwidget->save();
+        return;
+    }
+
     QString filename = QFileDialog::getSaveFileName(this,
       "Save intersection", {}, "XML files (*.xml)");
 
     if (filename.isEmpty())
         return;
 
-    QFile file(filename);
-    file.open(QIODevice::WriteOnly);
-    QXmlStreamWriter w(&file);
-    w.setAutoFormatting(true);
-
-    IntersectionScene& scene = currInterwidget->getScene();
-    scene.save(w);
+    currInterwidget->save(filename);
 }
 
-void MainWindow::loadCurrentIntersection()
+void MainWindow::openIntersection()
 {
+    QString filename = QFileDialog::getOpenFileName(this,
+      "Open intersection", {}, "XML files (*.xml);;All files (*)");
 
+    if (filename.isEmpty())
+        return;
+
+    auto* window = ui->mdiArea->addSubWindow(
+                new IntersectionWidget(QString("New Intersection %1").arg(getNewId()), ui->mdiArea));
+
+    bool opened = static_cast<IntersectionWidget*>(window->widget())->open(filename);
+
+    if (!opened)
+        delete window;
 }
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event)

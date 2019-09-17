@@ -1,24 +1,67 @@
 #include "IntersectionWidget.h"
 #include "ui_IntersectionWidget.h"
 
+#include <set>
 #include <QFile>
 #include <QStackedLayout>
+#include <QDebug>
+
+class TextEditView: public QObject
+{
+public:
+    using QObject::QObject;
+
+    void addTextEdit(QTextEdit* textEdit) {
+        auto res = textEdits_.insert(textEdit);
+        if (res.second)
+            connect(textEdit, &QTextEdit::textChanged,
+                    [this, textEdit] { setText(textEdit); });
+    }
+
+    void setAdditionalCallback(const std::function<void(QTextEdit*)>& cb) {
+        additionalCallback_ = cb;
+    }
+
+private:
+    void setText(QTextEdit* currEdit) {
+        for (QTextEdit* edit: textEdits_) {
+            if (edit == currEdit)
+                continue;
+            edit->blockSignals(true);
+            edit->setText(currEdit->toPlainText());
+            edit->blockSignals(false);
+        }
+        if (additionalCallback_)
+            additionalCallback_(currEdit);
+    }
+
+
+private:
+    std::set<QTextEdit*> textEdits_;
+    std::function<void(QTextEdit*)> additionalCallback_;
+};
 
 IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
-    QWidget(parent), name_(name),
-    ui(new Ui::IntersectionWidget)
+    QWidget(parent), ui(new Ui::IntersectionWidget)
 {
     ui->setupUi(this);
     ui->graphicsView->setScene(&scene_);
     ui->graphicsView->setMouseTracking(true);
 
-    QFile file(":/default.xml");
-    file.open(QIODevice::ReadOnly);
-    ui->textEdit->setText(file.readAll());
-    file.close();
+    ui->graphicsView_2->setScene(&scene_);
+    ui->graphicsView_2->setMouseTracking(true);
 
-    setView(View::Scene);
+    TextEditView* editView = new TextEditView(this);
 
+    editView->addTextEdit(ui->textEdit);
+    editView->addTextEdit(ui->textEdit_2);
+    editView->setAdditionalCallback([this] (QTextEdit*) {
+        if (isSaved())
+            setWindowTitle(windowTitle() + '*');
+        saved_ = false;
+    });
+
+    open(":/default.xml");
     setWindowTitle(name);
 }
 
@@ -34,11 +77,11 @@ IntersectionScene& IntersectionWidget::getScene()
 
 void IntersectionWidget::setView(IntersectionWidget::View view)
 {
+    QXmlStreamReader r(ui->textEdit->toPlainText());
+    scene_.load(r);
+    scene_.reset();
     switch (view) {
         case View::Scene: {
-            QXmlStreamReader r(ui->textEdit->toPlainText());
-            scene_.load(r);
-            scene_.reset();
             ui->stackedWidget->setCurrentIndex(0);
             break;
         }
@@ -52,6 +95,82 @@ void IntersectionWidget::setView(IntersectionWidget::View view)
             break;
         }
         case View::SceneEdit:
+            ui->stackedWidget->setCurrentIndex(2);
             break;
     }
+}
+
+IntersectionWidget::View IntersectionWidget::getView() const
+{
+    switch (ui->stackedWidget->currentIndex()) {
+        case 0: return View::Scene;
+        case 1: return View::Edit;
+        case 2: return View::SceneEdit;
+        default: return View::Scene;
+    }
+}
+
+bool IntersectionWidget::open(const QString& filename)
+{
+    if (filename.isEmpty()) {
+        qWarning("Empty filename. Cannot open");
+        return false;
+    }
+
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    ui->textEdit->setText(file.readAll());
+    setView(getView());
+    file.close();
+
+    if (!filename.startsWith(':')) {
+        fileinfo_.setFile(filename);
+        saved_ = true;
+        setWindowTitle(fileinfo_.fileName());
+    }
+
+    return true;
+}
+
+void IntersectionWidget::save(const QString& filename)
+{
+    if (filename.isEmpty()) {
+        qWarning("Empty filename. Cannot save");
+        return;
+    }
+
+    fileinfo_.setFile(filename);
+    save();
+}
+
+void IntersectionWidget::save()
+{
+    QFile file(fileinfo_.filePath());
+    file.open(QIODevice::WriteOnly);
+    qDebug() << fileinfo_.path();
+    if (!file.isWritable()) {
+        qWarning("File is not writable");
+        file.close();
+        return;
+    }
+
+    saved_ = true;
+    setWindowTitle(fileinfo_.fileName());
+    QXmlStreamWriter w(&file);
+    w.setAutoFormatting(true);
+    scene_.save(w);
+    file.close();
+}
+
+bool IntersectionWidget::isSaved() const
+{
+    if (!fileExists())
+        return false;
+
+    return saved_;
+}
+
+bool IntersectionWidget::fileExists() const
+{
+    return fileinfo_.isFile();
 }

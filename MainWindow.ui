@@ -50,7 +50,10 @@
    <addaction name="actionOpenIntersection"/>
    <addaction name="actionSaveIntersection"/>
    <addaction name="separator"/>
-   <addaction name="actionEditIntersection"/>
+   <addaction name="actionEditView"/>
+   <addaction name="actionSceneView"/>
+   <addaction name="actionSceneEditView"/>
+   <addaction name="separator"/>
    <addaction name="actionStart"/>
    <addaction name="actionPause"/>
    <addaction name="actionStop"/>
@@ -82,7 +85,7 @@
     <string>SaveIntersection</string>
    </property>
   </action>
-  <action name="actionEditIntersection">
+  <action name="actionEditView">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -91,7 +94,7 @@
      <normaloff>:/toolbutton/icons/Edit.svg</normaloff>:/toolbutton/icons/Edit.svg</iconset>
    </property>
    <property name="text">
-    <string>EditIntersection</string>
+    <string>EditView</string>
    </property>
   </action>
   <action name="actionPause">
@@ -119,6 +122,30 @@
    </property>
    <property name="text">
     <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionSceneView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/toolbutton/icons/Scene.svg</normaloff>:/toolbutton/icons/Scene.svg</iconset>
+   </property>
+   <property name="text">
+    <string>SceneView</string>
+   </property>
+  </action>
+  <action name="actionSceneEditView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/toolbutton/icons/SceneEdit.svg</normaloff>:/toolbutton/icons/SceneEdit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>SceneEditView</string>
    </property>
   </action>
  </widget>

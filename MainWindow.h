@@ -22,13 +22,14 @@ public:
     IntersectionWidget* currentIntersectionWidget();
 
     void saveCurrentIntersection();
-    void loadCurrentIntersection();
+    void openIntersection();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
     void mouseSceneMoveEvent(QGraphicsSceneMouseEvent* mouseEvent);
 
 private:
+
     int getNewId();
     void onCurrentIntersectionChanged(IntersectionWidget* currentIntersection);
 

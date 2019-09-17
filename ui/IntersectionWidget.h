@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <QWidget>
+#include <QFileInfo>
 #include "scene/IntersectionScene.h"
 
 namespace Ui {
@@ -26,11 +27,19 @@ public:
     };
 
     void setView(View view);
+    View getView() const;
+
+    bool open(const QString& filename);
+    void save(const QString& filename);
+    void save();
+    bool isSaved() const;
+    bool fileExists() const;
 
 private:
-    QString name_;
+    QFileInfo fileinfo_;
     Ui::IntersectionWidget *ui;
     IntersectionScene scene_;
+    bool saved_ = false;
 };
 
 #endif // INTERSECIONSUBWINDOW_H

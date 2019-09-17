@@ -25,5 +25,7 @@
         <file>icons/Stop.svg</file>
         <file>icons/Start.svg</file>
         <file>icons/Pause.svg</file>
+        <file>icons/SceneEdit.svg</file>
+        <file>icons/Scene.svg</file>
     </qresource>
 </RCC>

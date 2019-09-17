@@ -115,7 +115,7 @@ bool IntersectionScene::load(QXmlStreamReader& xmlStream)
             while (xmlStream.readNextStartElement()) {
                 int id = xmlStream.attributes().value("id").toInt();
                 auto* r = createRoute(id);
-                if (!r->load(xmlStream)) {
+                if (r && !r->load(xmlStream)) {
                     deleteRoute(id);
                 }
             }
@@ -206,16 +206,29 @@ void IntersectionScene::drawBackground(QPainter* painter, const QRectF& rect)
         }
     };
 
+    auto DrawLine = [painter] (const QPointF &p1, const QPointF &p2, qreal lineWidth) {
+        painter->save();
+        QPen pen = painter->pen();
+        pen.setWidthF(lineWidth);
+        painter->setPen(pen);
+        painter->drawLine(p1, p2);
+        painter->restore();
+    };
+
     // draw horizontal grid
     qreal startTop = GetStart(rect.top());
-    int i = 0;
     for (qreal y = startTop; y <= rect.bottom(); y += step) {
-        ++i;
-       painter->drawLine(QPointF{rect.left(), y}, QPointF{rect.right(), y});
+        if (y == 0.0)
+            DrawLine(QPointF{rect.left(), y}, QPointF{rect.right(), y}, 3);
+        else
+            painter->drawLine(QPointF{rect.left(), y}, QPointF{rect.right(), y});
     }
     // now draw vertical grid
     qreal startLeft = GetStart(rect.left());
     for (qreal x = startLeft; x <= rect.right(); x += step) {
-       painter->drawLine(QPointF{x, rect.top()}, QPointF{x, rect.bottom()});
+        if (x == 0.0)
+            DrawLine(QPointF{x, rect.top()}, QPointF{x, rect.bottom()}, 3);
+        else
+            painter->drawLine(QPointF{x, rect.top()}, QPointF{x, rect.bottom()});
     }
 }
