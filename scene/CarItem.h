@@ -14,6 +14,8 @@ public:
     void reset();
 
     void setVelocity(qreal velocity);
+    void setMaxVelocity(qreal velocity);
+    void setDesiredVelocity(qreal velocity);
     void setDistance(qreal distance_);
     void setDefaultDistance(qreal distance);
 
@@ -33,6 +35,8 @@ protected:
 
 private:
     qreal velocity_ = 0;
+    qreal desiredVelocity_ = 0;
+    qreal maxVelocity_ = 100;
     qreal defaultDistance_ = 0;
     qreal distance_ = 0;
     Route* route_ = nullptr;

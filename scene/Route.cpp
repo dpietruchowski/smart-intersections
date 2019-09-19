@@ -36,6 +36,7 @@ bool Route::load(QXmlStreamReader& xmlStream)
         return false;
 
     paths_.clear();
+    id_ = xmlStream.attributes().value("id").toInt();
     while (xmlStream.readNextStartElement()) {
         if (xmlStream.name() == "path-id") {
             QString id = xmlStream.readElementText();
@@ -52,6 +53,7 @@ bool Route::load(QXmlStreamReader& xmlStream)
 void Route::save(QXmlStreamWriter& xmlStream) const
 {
     xmlStream.writeStartElement("route");
+    xmlStream.writeAttribute("id", QString::number(getId()));
     for (PathItem* path: paths_) {
         xmlStream.writeTextElement("path-id", QString::number(path->getId()));
     }

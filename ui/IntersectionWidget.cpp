@@ -45,11 +45,15 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
     QWidget(parent), ui(new Ui::IntersectionWidget)
 {
     ui->setupUi(this);
-    ui->graphicsView->setScene(&scene_);
-    ui->graphicsView->setMouseTracking(true);
 
-    ui->graphicsView_2->setScene(&scene_);
-    ui->graphicsView_2->setMouseTracking(true);
+    auto initGraphicsView = [this] (QGraphicsView* view) {
+        view->setScene(&scene_);
+        view->setMouseTracking(true);
+        view->scale(1, -1);
+    };
+
+    initGraphicsView(ui->graphicsView);
+    initGraphicsView(ui->graphicsView_2);
 
     TextEditView* editView = new TextEditView(this);
 
@@ -60,6 +64,14 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
             setWindowTitle(windowTitle() + '*');
         saved_ = false;
     });
+
+    connect(ui->actionLoadScene, &QAction::triggered, [this] {
+        QXmlStreamReader r(ui->textEdit->toPlainText());
+        scene_.load(r);
+        scene_.reset();
+    });
+
+    ui->toolButton->setDefaultAction(ui->actionLoadScene);
 
     open(":/default.xml");
     setWindowTitle(name);
@@ -77,9 +89,7 @@ IntersectionScene& IntersectionWidget::getScene()
 
 void IntersectionWidget::setView(IntersectionWidget::View view)
 {
-    QXmlStreamReader r(ui->textEdit->toPlainText());
-    scene_.load(r);
-    scene_.reset();
+    ui->actionLoadScene->trigger();
     switch (view) {
         case View::Scene: {
             ui->stackedWidget->setCurrentIndex(0);
@@ -147,7 +157,6 @@ void IntersectionWidget::save()
 {
     QFile file(fileinfo_.filePath());
     file.open(QIODevice::WriteOnly);
-    qDebug() << fileinfo_.path();
     if (!file.isWritable()) {
         qWarning("File is not writable");
         file.close();
@@ -160,6 +169,12 @@ void IntersectionWidget::save()
     w.setAutoFormatting(true);
     scene_.save(w);
     file.close();
+
+
+    QFile fileraw(fileinfo_.filePath() + "_raw");
+    fileraw.open(QIODevice::WriteOnly);
+    fileraw.write(ui->textEdit->toPlainText().toUtf8());
+    fileraw.close();
 }
 
 bool IntersectionWidget::isSaved() const

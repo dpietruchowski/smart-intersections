@@ -28,6 +28,7 @@ QMAKE_CXXFLAGS += -std=c++17
 SOURCES += \
         scene/BaseItem.cpp \
         scene/CarItem.cpp \
+        scene/CollisionRectItem.cpp \
         scene/IntersectionLegendItem.cpp \
         scene/IntersectionScene.cpp \
         main.cpp \
@@ -36,11 +37,13 @@ SOURCES += \
         scene/PathItem.cpp \
         scene/Route.cpp \
         ui/IntersectionEditor.cpp \
-        ui/IntersectionWidget.cpp
+        ui/IntersectionWidget.cpp \
+        ui/TimerWidget.cpp
 
 HEADERS += \
         scene/BaseItem.h \
         scene/CarItem.h \
+        scene/CollisionRectItem.h \
         scene/IntersectionLegendItem.h \
         scene/IntersectionScene.h \
         MainWindow.h \ \
@@ -48,12 +51,14 @@ HEADERS += \
         scene/PathItem.h \
         scene/Route.h \
         ui/IntersectionEditor.h \
-        ui/IntersectionWidget.h
+        ui/IntersectionWidget.h \
+        ui/TimerWidget.h
 
 FORMS += \
         MainWindow.ui \
         ui/IntersectionEditor.ui \
-        ui/IntersectionWidget.ui
+        ui/IntersectionWidget.ui \
+        ui/TimerWidget.ui
 
 RESOURCES += \
     icons.qrc \

@@ -1,22 +1,22 @@
 <intersection>
     <roads>
-        <path id="0" x="0" y="0">
+        <path id="0" x="0" y="0" color="darkRed">
             <line-to>
                 <point x="400" y="0"/>
             </line-to>
         </path>
-        <path id="1" x="400" y="0">
+        <path id="1" x="400" y="0" color="darkBlue">
             <line-to>
                 <point x="400" y="0"/>
             </line-to>
         </path>
-        <path id="2" x="400" y="0">
+        <path id="2" x="400" y="0" color="darkGreen">
             <quad-to>
                 <point x="170" y="0"/>
                 <point x="170" y="-250"/>
             </quad-to>
         </path>
-        <path id="3" x="800" y="-100">
+        <path id="3" x="800" y="-100" color="darkYellow">
             <line-to>
                 <point x="-800" y="0"/>
             </line-to>

@@ -6,8 +6,8 @@
 namespace {
 
 const QPolygonF carShape = QPolygonF({
-    QPointF{15, -23}, QPointF{15, 18}, QPointF{12, 23},
-    QPointF{-12, 23}, QPointF{-15, 18}, QPointF{-15, -23}
+    QPointF{12, -23}, QPointF{12, 18}, QPointF{10, 23},
+    QPointF{-10, 23}, QPointF{-12, 18}, QPointF{-12, -23}
 });
 
 }
@@ -33,7 +33,17 @@ void CarItem::reset()
 
 void CarItem::setVelocity(qreal velocity)
 {
-    velocity_ = velocity;
+    desiredVelocity_ = velocity;
+}
+
+void CarItem::setMaxVelocity(qreal velocity)
+{
+    maxVelocity_ = velocity;
+}
+
+void CarItem::setDesiredVelocity(qreal velocity)
+{
+    desiredVelocity_ = velocity;
 }
 
 void CarItem::setDistance(qreal distance)
@@ -89,7 +99,7 @@ bool CarItem::load(QXmlStreamReader& xmlStream)
     qreal d = xmlStream.attributes().value("d").toDouble();
     setId(id);
     setVelocity(v);
-    setDistance(d);
+    setDefaultDistance(d);
 
     if (xmlStream.readNextStartElement() && xmlStream.name() == "route-id") {
         QString strPathId = xmlStream.readElementText();
@@ -107,7 +117,7 @@ void CarItem::save(QXmlStreamWriter& xmlStream) const
     xmlStream.writeStartElement("car");
     xmlStream.writeAttribute("id", QString::number(getId()));
     xmlStream.writeAttribute("v", QString::number(getVelocity()));
-    xmlStream.writeAttribute("d", QString::number(getDistance()));
+    xmlStream.writeAttribute("d", QString::number(getDefaultDistance()));
 
     if (route_)
         xmlStream.writeTextElement("route-id",
@@ -118,6 +128,11 @@ void CarItem::save(QXmlStreamWriter& xmlStream) const
 
 void CarItem::onStep()
 {
+    if (maxVelocity_ < desiredVelocity_)
+        velocity_ = maxVelocity_;
+    else
+        velocity_ = desiredVelocity_;
+
     distance_ += velocity_;
 }
 

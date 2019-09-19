@@ -2,6 +2,8 @@
 
 #include "CarItem.h"
 
+#include <QBrush>
+#include <QPen>
 #include <QDebug>
 
 PathItem::PathItem(int id, QGraphicsItem* parent): QGraphicsPathItem(parent), BaseItem(id)
@@ -11,7 +13,6 @@ PathItem::PathItem(int id, QGraphicsItem* parent): QGraphicsPathItem(parent), Ba
     path.quadTo(10, 20, 20, 20);
     path.lineTo(10, 10);
     setPath(path);
-    text_ = new QGraphicsSimpleTextItem(QString::number(id), this);
 }
 
 PathItem::PathItem(QGraphicsItem* parent): PathItem(-1, parent)
@@ -33,6 +34,10 @@ void PathItem::addCar(CarItem* car)
 {
     updateCar(car);
     cars_.push_back(car);
+
+    cars_.sort([](CarItem* a, CarItem* b){
+        return a->getDistance() < b->getDistance();
+    });
 }
 
 void PathItem::removeCar(CarItem* car)
@@ -51,6 +56,15 @@ bool PathItem::load(QXmlStreamReader& xmlStream)
     qreal y = xmlStream.attributes().value("y").toDouble();
     setId(id);
     setPos(x, y);
+
+    if (xmlStream.attributes().hasAttribute("color")) {
+        QColor color = xmlStream.attributes().value("color").toString();
+        QPen p = pen();
+        p.setWidth(2);
+        p.setColor(color);
+        setPen(p);
+    }
+
     PainterPath path;
     path.load(xmlStream);
     setPath(path);
@@ -64,6 +78,8 @@ void PathItem::save(QXmlStreamWriter& xmlStream) const
     xmlStream.writeAttribute("id", QString::number(getId()));
     xmlStream.writeAttribute("x", QString::number(point.x()));
     xmlStream.writeAttribute("y", QString::number(point.y()));
+    QPen p = pen();
+    xmlStream.writeAttribute("color", p.color().name());
     path_.save(xmlStream);
     xmlStream.writeEndElement();
 }
@@ -81,6 +97,17 @@ void PathItem::setPath(const PainterPath& path)
 
 void PathItem::onStep()
 {
+    if ((*cars_.rbegin())->getDistance() > 500)
+        (*cars_.rbegin())->setVelocity(5);
+    for(auto iter = cars_.begin(); iter != cars_.end(); ++iter) {
+        auto next = std::next(iter);
+        qreal vMax = 100;
+        if (next != cars_.end()) {
+            vMax = (*next)->getDistance() - (*iter)->getDistance() - 50;
+        }
+        (*iter)->setMaxVelocity(vMax);
+    }
+
     for (auto* car : cars_) {
         updateCar(car);
     }
@@ -128,5 +155,4 @@ void PathItem::updateCar(CarItem* car)
     auto positionAngle = pointAtCar(car);
     car->setPos(positionAngle.first);
     car->setRotation(270-positionAngle.second);
-    qDebug() << car->getDistance();
 }

@@ -13,7 +13,8 @@ void BaseItem::step()
 void BaseItem::setId(int id)
 {
     id_ = id;
-    text_->setText(QString::number(id));
+    if (text_)
+        text_->setText(QString::number(id));
 }
 
 void BaseItem::onStep()

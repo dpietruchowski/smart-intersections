@@ -14,6 +14,7 @@
 #include "scene/PathItem.h"
 
 #include "ui/IntersectionWidget.h"
+#include "ui/TimerWidget.h"
 
 class ViewActionGroup : public QActionGroup
 {
@@ -66,6 +67,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->mdiArea->setViewMode(QMdiArea::TabbedView);
 
+    timer_ = new TimerWidget(this);
+    ui->toolBar->addWidget(timer_);
+
     connect(ui->actionNewIntersection, &QAction::triggered,
             [this] {
         auto* window = ui->mdiArea->addSubWindow(
@@ -108,18 +112,25 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionStart, &QAction::triggered, [this] {
         auto* intersection = currentIntersectionWidget();
-        if (intersection)
+        if (intersection) {
+            timer_->start();
             intersection->getScene().start();
+        }
     });
     connect(ui->actionPause, &QAction::triggered, [this] {
         auto* intersection = currentIntersectionWidget();
-        if (intersection)
+        if (intersection) {
+            timer_->pause();
             intersection->getScene().stop();
+        }
     });
     connect(ui->actionStop, &QAction::triggered, [this] {
         auto* intersection = currentIntersectionWidget();
-        if (intersection)
+        if (intersection) {
+            timer_->stop();
+            intersection->getScene().stop();
             intersection->getScene().reset();
+        }
     });
 
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, [this] (QMdiSubWindow* window) {

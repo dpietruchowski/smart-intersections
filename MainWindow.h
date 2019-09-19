@@ -9,6 +9,7 @@ namespace Ui {
 class MainWindow;
 }
 
+class TimerWidget;
 class IntersectionWidget;
 
 class MainWindow : public QMainWindow
@@ -36,6 +37,7 @@ private:
 private:
     Ui::MainWindow *ui;
     int nIntersections_ = 0;
+    TimerWidget* timer_ = nullptr;
 };
 
 #endif // MAINWINDOW_H

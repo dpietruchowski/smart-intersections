@@ -22,14 +22,34 @@ void IntersectionScene::reset()
             continue;
         }
     }
+    std::vector<CarItem*> cars;
     for (QGraphicsItem* item: items()) {
         CarItem* car = dynamic_cast<CarItem*>(item);
         if (car) {
+            cars.push_back(car);
             car->reset();
             car->moveToNextPath(car->getDistance());
             continue;
         }
     }
+
+    std::sort(cars.begin(), cars.end(), [this] (CarItem* a, CarItem* b) {
+        return a->getDefaultDistance()> b->getDefaultDistance();
+    });
+/*
+    qreal i = 0.1;
+    qreal factor = 0.1;
+    qreal d = 100;
+    for(CarItem* car: cars) {
+        d = 100 - car->getDefaultDistance()/10;
+        qreal y = d/i;
+        qreal x = y*0.1125;
+        car->setVelocity(x);
+        factor *= 1.25;
+        if (factor > 0.25)
+            factor = 0.25;
+        i += factor;
+    }*/
 }
 
 void IntersectionScene::start(int msec)
@@ -93,12 +113,19 @@ void IntersectionScene::deleteRoute(int id)
 bool IntersectionScene::load(QXmlStreamReader& xmlStream)
 {
     bool res = xmlStream.readNextStartElement();
-    qDebug() << xmlStream.name();
     if (!res || xmlStream.name() != "intersection")
         return false;
 
     clear();
     routes_.clear();
+
+    qreal x = xmlStream.attributes().value("x").toDouble();
+    qreal y = xmlStream.attributes().value("y").toDouble();
+    qreal w = xmlStream.attributes().value("w").toDouble();
+    qreal h = xmlStream.attributes().value("h").toDouble();
+
+    setSceneRect(x, y, w, h);
+
     while (!xmlStream.atEnd()) {
         if (!xmlStream.readNextStartElement())
             break;
@@ -139,11 +166,15 @@ void IntersectionScene::save(QXmlStreamWriter& xmlStream) const
 {
     xmlStream.writeStartElement("intersection");
 
+    QRectF rect = sceneRect();
+    xmlStream.writeAttribute("x", QString::number(rect.x()));
+    xmlStream.writeAttribute("y", QString::number(rect.y()));
+    xmlStream.writeAttribute("w", QString::number(rect.width()));
+    xmlStream.writeAttribute("h", QString::number(rect.height()));
+
     xmlStream.writeStartElement("roads");
-    for (QGraphicsItem* item: items()) {
-        PathItem* pathItem = dynamic_cast<PathItem*>(item);
-        if (pathItem)
-            pathItem->save(xmlStream);
+    for (PathItem* pathItem: getSortedPaths()) {
+        pathItem->save(xmlStream);
     }
     xmlStream.writeEndElement();
 
@@ -154,10 +185,8 @@ void IntersectionScene::save(QXmlStreamWriter& xmlStream) const
     xmlStream.writeEndElement();
 
     xmlStream.writeStartElement("cars");
-    for (QGraphicsItem* item: items()) {
-        CarItem* car = dynamic_cast<CarItem*>(item);
-        if (car)
-            car->save(xmlStream);
+    for (CarItem* car: getSortedCars()) {
+        car->save(xmlStream);
     }
     xmlStream.writeEndElement();
 
@@ -191,6 +220,36 @@ int IntersectionScene::getNextId() const
 void IntersectionScene::onStep()
 {
 
+}
+
+std::vector<PathItem*> IntersectionScene::getSortedPaths() const
+{
+    std::vector<PathItem*> sorted;
+    for (QGraphicsItem* item: items()) {
+        PathItem* pathItem = dynamic_cast<PathItem*>(item);
+        if (pathItem)
+            sorted.push_back(pathItem);
+    }
+    std::sort(sorted.begin(), sorted.end(),
+              [] (PathItem* p1, PathItem* p2) {
+        return p1->getId() < p2->getId();
+    });
+    return sorted;
+}
+
+std::vector<CarItem*> IntersectionScene::getSortedCars() const
+{
+    std::vector<CarItem*> sorted;
+    for (QGraphicsItem* item: items()) {
+        CarItem* carItem = dynamic_cast<CarItem*>(item);
+        if (carItem)
+            sorted.push_back(carItem);
+    }
+    std::sort(sorted.begin(), sorted.end(),
+              [] (CarItem* c1, CarItem* c2) {
+        return c1->getId() < c2->getId();
+    });
+    return sorted;
 }
 
 void IntersectionScene::drawBackground(QPainter* painter, const QRectF& rect)

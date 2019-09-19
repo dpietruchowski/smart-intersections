@@ -26,7 +26,7 @@ protected:
     virtual void onStep();
 
 protected:
-    QGraphicsSimpleTextItem* text_;
+    QGraphicsSimpleTextItem* text_ = nullptr;
 
 private:
     int id_ = -1;

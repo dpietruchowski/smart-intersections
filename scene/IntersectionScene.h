@@ -11,6 +11,7 @@
 
 class PainterPath;
 class PathItem;
+class CarItem;
 
 class IntersectionScene: public QGraphicsScene
 {
@@ -40,6 +41,8 @@ protected:
     void onStep();
 
 private:
+    std::vector<PathItem*> getSortedPaths() const;
+    std::vector<CarItem*> getSortedCars() const;
     void step();
     int getNextId() const;
 
