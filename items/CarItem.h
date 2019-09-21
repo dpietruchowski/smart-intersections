@@ -5,13 +5,15 @@
 #include "BaseItem.h"
 #include "Route.h"
 
-class CarItem: public QGraphicsPolygonItem, public BaseItem
+class CarItem : public QGraphicsPolygonItem, public BaseItem
 {
 public:
     explicit CarItem(int id, QGraphicsItem * parent = nullptr);
     explicit CarItem(QGraphicsItem * parent = nullptr);
 
     void reset();
+
+    void limitCarVelocity(qreal velocity);
 
     void setVelocity(qreal velocity);
     void setMaxVelocity(qreal velocity);
@@ -21,23 +23,29 @@ public:
 
     qreal getVelocity() const;
     qreal getDistance() const;
+    qreal getPrevDistance() const;
     qreal getDefaultDistance() const;
 
     void setRoute(Route* route);
     PathItem* getNextPath();
     void moveToNextPath(qreal distance = 0);
 
-    bool load(QXmlStreamReader& xmlStream) override;
-    void save(QXmlStreamWriter& xmlStream) const override;
 
 protected:
     void onStep() override;
+    void onReset() override;
+
+private:
+    const char* getItemName() override;
+    bool loadItem(QXmlStreamReader& xmlStream) override;
+    void saveItem(QXmlStreamWriter& xmlStream) const override;
 
 private:
     qreal velocity_ = 0;
     qreal desiredVelocity_ = 0;
     qreal maxVelocity_ = 100;
     qreal defaultDistance_ = 0;
+    qreal prevDistance_ = 0;
     qreal distance_ = 0;
     Route* route_ = nullptr;
     Route::Iterator routeIter_;

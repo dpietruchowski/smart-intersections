@@ -12,14 +12,21 @@
 class PainterPath;
 class PathItem;
 class CarItem;
+class BaseItem;
 
 class IntersectionScene: public QGraphicsScene
 {
 public:
+    enum class Item {
+        PathItem,
+        CarItem,
+        CollisionAreaItem
+    };
+
     IntersectionScene();
 
     void reset();
-    void start(int msec = 10);
+    void start(int msec = 50);
     void stop();
 
     PathItem* addCarPath(const PainterPath &path,
@@ -41,8 +48,23 @@ protected:
     void onStep();
 
 private:
-    std::vector<PathItem*> getSortedPaths() const;
-    std::vector<CarItem*> getSortedCars() const;
+    BaseItem* createItem(Item item) const;
+
+    template <class BaseItemClass>
+    std::vector<BaseItemClass*> getSortedItems() const {
+        std::vector<BaseItemClass*> sorted;
+        for (QGraphicsItem* item: items()) {
+            BaseItemClass* pathItem = dynamic_cast<BaseItemClass*>(item);
+            if (pathItem)
+                sorted.push_back(pathItem);
+        }
+        std::sort(sorted.begin(), sorted.end(),
+                  [] (BaseItemClass* i1, BaseItemClass* i2) {
+            return i1->getId() < i2->getId();
+        });
+        return sorted;
+    }
+
     void step();
     int getNextId() const;
 

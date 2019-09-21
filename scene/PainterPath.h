@@ -30,6 +30,9 @@ public:
     inline void lineTo(qreal x, qreal y);
     inline void quadTo(qreal ctrlPtx, qreal ctrlPty, qreal endPtx, qreal endPty);
 
+    QPointF pointAtLength(qreal length) const;
+    qreal angleAtLength(qreal length) const;
+
 private:
     using Points = std::vector<QPointF>;
     Points loadPoints(QXmlStreamReader& xmlStream);

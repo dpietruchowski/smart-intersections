@@ -11,7 +11,6 @@
 #include <QActionGroup>
 
 #include "scene/IntersectionScene.h"
-#include "scene/PathItem.h"
 
 #include "ui/IntersectionWidget.h"
 #include "ui/TimerWidget.h"

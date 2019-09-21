@@ -109,3 +109,13 @@ void PainterPath::quadTo(const QPointF& ctrlPt, const QPointF& endPt)
     commands_.push_back(std::make_pair(Command::QuadTo, Points{ctrlPt, endPt}));
     QPainterPath::quadTo(ctrlPt, endPt);
 }
+
+QPointF PainterPath::pointAtLength(qreal length) const
+{
+    return pointAtPercent(percentAtLength(length));
+}
+
+qreal PainterPath::angleAtLength(qreal length) const
+{
+    return angleAtPercent(percentAtLength(length));
+}

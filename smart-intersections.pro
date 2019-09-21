@@ -26,39 +26,42 @@ CONFIG += c++17
 QMAKE_CXXFLAGS += -std=c++17
 
 SOURCES += \
-        scene/BaseItem.cpp \
-        scene/CarItem.cpp \
-        scene/CollisionRectItem.cpp \
-        scene/IntersectionLegendItem.cpp \
-        scene/IntersectionScene.cpp \
+        items/CollisionAreaItem.cpp \
         main.cpp \
         MainWindow.cpp \
+        items/BaseItem.cpp \
+        items/CarItem.cpp \
+        items/PathItem.cpp \
+        scene/IntersectionScene.cpp \
         scene/PainterPath.cpp \
-        scene/PathItem.cpp \
         scene/Route.cpp \
-        ui/IntersectionEditor.cpp \
         ui/IntersectionWidget.cpp \
-        ui/TimerWidget.cpp
+        ui/TimerWidget.cpp \
+        utils/reverse.cpp
 
 HEADERS += \
-        scene/BaseItem.h \
-        scene/CarItem.h \
-        scene/CollisionRectItem.h \
-        scene/IntersectionLegendItem.h \
+        MainWindow.h \
+        items/BaseItem.h \
+        items/CarItem.h \
+        items/CollisionAreaItem.h \
+        items/PathItem.h \
         scene/IntersectionScene.h \
-        MainWindow.h \ \
         scene/PainterPath.h \
-        scene/PathItem.h \
         scene/Route.h \
-        ui/IntersectionEditor.h \
         ui/IntersectionWidget.h \
-        ui/TimerWidget.h
+        ui/TimerWidget.h \
+        utils/reverse.h
 
 FORMS += \
         MainWindow.ui \
-        ui/IntersectionEditor.ui \
         ui/IntersectionWidget.ui \
         ui/TimerWidget.ui
+
+INCLUDEPATH += \
+        scene \
+        items \
+        ui \
+        utils
 
 RESOURCES += \
     icons.qrc \

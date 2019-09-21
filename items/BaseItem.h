@@ -12,18 +12,29 @@ public:
     BaseItem() = default;
     virtual ~BaseItem() = default;
 
+    void reset();
     void step();
 
-
-    virtual bool load(QXmlStreamReader& xmlStream) = 0;
-    virtual void save(QXmlStreamWriter& xmlStream) const = 0;
+    bool load(QXmlStreamReader& xmlStream);
+    void save(QXmlStreamWriter& xmlStream);
 
     int getId() const { return id_; }
     void setId(int id);
 
+    template<class GraphicsClass>
+    GraphicsClass* getItem() {
+        return dynamic_cast<GraphicsClass*>(this);
+    }
+
 
 protected:
+    virtual void onReset() {}
     virtual void onStep();
+
+private:
+    virtual const char* getItemName() = 0;
+    virtual bool loadItem(QXmlStreamReader& xmlStream) = 0;
+    virtual void saveItem(QXmlStreamWriter& xmlStream) const = 0;
 
 protected:
     QGraphicsSimpleTextItem* text_ = nullptr;

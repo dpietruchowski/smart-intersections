@@ -3,6 +3,8 @@
 #include "IntersectionScene.h"
 #include "PathItem.h"
 
+#include <QDebug>
+
 namespace {
 
 const QPolygonF carShape = QPolygonF({
@@ -23,12 +25,10 @@ CarItem::CarItem(QGraphicsItem* parent): CarItem(-1, parent)
 
 }
 
-void CarItem::reset()
+void CarItem::limitCarVelocity(qreal velocity)
 {
-    if (route_)
-        routeIter_ = route_->begin();
-
-    setDistance(getDefaultDistance());
+    if (velocity < maxVelocity_)
+        maxVelocity_ = velocity;
 }
 
 void CarItem::setVelocity(qreal velocity)
@@ -61,6 +61,11 @@ qreal CarItem::getDistance() const
     return distance_;
 }
 
+qreal CarItem::getPrevDistance() const
+{
+    return prevDistance_;
+}
+
 qreal CarItem::getDefaultDistance() const
 {
     return defaultDistance_;
@@ -73,8 +78,11 @@ void CarItem::setRoute(Route* route)
 
 PathItem* CarItem::getNextPath()
 {
+    if (!route_)
+        return nullptr;
     if (routeIter_ == route_->end())
         return nullptr;
+
     return *routeIter_++;
 }
 
@@ -88,12 +96,39 @@ void CarItem::moveToNextPath(qreal distance)
     nextPath->addCar(this);
 }
 
-bool CarItem::load(QXmlStreamReader& xmlStream)
+void CarItem::onReset()
 {
-    if (!xmlStream.isStartElement() ||
-            xmlStream.name() != "car")
-        return false;
+    if (route_)
+        routeIter_ = route_->begin();
 
+    setDistance(getDefaultDistance());
+}
+
+void CarItem::onStep()
+{
+    if (maxVelocity_ < desiredVelocity_)
+        velocity_ = maxVelocity_;
+    else
+        velocity_ = desiredVelocity_;
+
+    if (velocity_ < 0)
+        qDebug() << velocity_;
+    prevDistance_ = distance_;
+    distance_ += velocity_;
+}
+
+qreal CarItem::getVelocity() const
+{
+    return velocity_;
+}
+
+const char* CarItem::getItemName()
+{
+    return "car";
+}
+
+bool CarItem::loadItem(QXmlStreamReader& xmlStream)
+{
     int id = xmlStream.attributes().value("id").toInt();
     qreal v = xmlStream.attributes().value("v").toDouble();
     qreal d = xmlStream.attributes().value("d").toDouble();
@@ -112,31 +147,12 @@ bool CarItem::load(QXmlStreamReader& xmlStream)
     return true;
 }
 
-void CarItem::save(QXmlStreamWriter& xmlStream) const
+void CarItem::saveItem(QXmlStreamWriter& xmlStream) const
 {
-    xmlStream.writeStartElement("car");
-    xmlStream.writeAttribute("id", QString::number(getId()));
     xmlStream.writeAttribute("v", QString::number(getVelocity()));
     xmlStream.writeAttribute("d", QString::number(getDefaultDistance()));
 
     if (route_)
         xmlStream.writeTextElement("route-id",
                                    QString::number(route_->getId()));
-
-    xmlStream.writeEndElement();
-}
-
-void CarItem::onStep()
-{
-    if (maxVelocity_ < desiredVelocity_)
-        velocity_ = maxVelocity_;
-    else
-        velocity_ = desiredVelocity_;
-
-    distance_ += velocity_;
-}
-
-qreal CarItem::getVelocity() const
-{
-    return velocity_;
 }
