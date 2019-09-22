@@ -25,3 +25,11 @@ bool CollisionPath::isWholeInside(qreal backDist, qreal fronDist)
 {
     return isInside(backDist) && isInside(fronDist);
 }
+
+CollisionPath merge(const CollisionPath& left, const CollisionPath& right)
+{
+    if (left.area_ != right.area_)
+        return {};
+
+    return CollisionPath(left.distanceIn_, right.distanceOut_, left.area_);
+}

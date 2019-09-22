@@ -22,6 +22,8 @@ public:
     bool isPartInside(qreal backDist, qreal fronDist);
     bool isWholeInside(qreal backDist, qreal fronDist);
 
+    friend CollisionPath merge(const CollisionPath& left, const CollisionPath& right);
+
 private:
     qreal distanceIn_ = 0;
     qreal distanceOut_ = 0;

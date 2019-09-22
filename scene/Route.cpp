@@ -64,3 +64,43 @@ int Route::getId() const
 {
     return id_;
 }
+
+qreal Route::getLength() const
+{
+    qreal length = 0;
+    for (auto* path: paths_) {
+        length += path->path().length();
+    }
+    return length;
+}
+
+std::pair<PathItem*, qreal> Route::getPathAtDistance(qreal distance) const
+{
+    PathItem* desiredPath = nullptr;
+    for (auto* path: paths_) {
+        qreal pathLength = path->path().length();
+        if (distance < pathLength) {
+            desiredPath = path;
+            break;
+        }
+        distance -= pathLength;
+    }
+    return std::make_pair(desiredPath, distance);
+}
+
+std::vector<CollisionPath> Route::getCollisionPaths() const
+{
+    std::vector<CollisionPath> collisionPaths;
+    qreal distance = 0;
+    for (auto* path: paths_) {
+        CollisionPath cPath = path->getNextCollisionPath(distance);
+        if (!cPath.isValid())
+            break;
+
+        collisionPaths.push_back(cPath);
+        distance = cPath.getInDistance();
+    }
+    return collisionPaths;
+}
+
+

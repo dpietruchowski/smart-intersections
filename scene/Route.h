@@ -7,6 +7,7 @@
 
 class PathItem;
 class IntersectionScene;
+class CollisionPath;
 
 class Route
 {
@@ -25,6 +26,10 @@ public:
 
     int getId() const;
 
+    qreal getLength() const;
+    std::pair<PathItem*, qreal> getPathAtDistance(qreal distance) const;
+
+    std::vector<CollisionPath> getCollisionPaths() const;
 private:
     int id_;
     IntersectionScene& intersection_;

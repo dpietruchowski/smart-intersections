@@ -19,16 +19,16 @@ void IntersectionScene::reset()
     for (auto* baseItem: getSortedItems<BaseItem>()) {
         baseItem->reset();
     }
+    /*
     std::vector<CarItem*> cars = getSortedItems<CarItem>();
     for (auto* car: cars) {
-        car->moveToNextPath(car->getDistance());
+        car->moveToNextPath();
     }
 
     std::sort(cars.begin(), cars.end(), [this] (CarItem* a, CarItem* b) {
         return a->getDefaultDistance()> b->getDefaultDistance();
     });
 
-/*
     qreal i = 0.1;
     qreal factor = 0.1;
     qreal d = 100;

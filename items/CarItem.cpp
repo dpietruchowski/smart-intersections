@@ -31,11 +31,6 @@ void CarItem::limitCarVelocity(qreal velocity)
         setMaxVelocity(velocity);
 }
 
-void CarItem::setVelocity(qreal velocity)
-{
-    desiredVelocity_ = velocity;
-}
-
 void CarItem::setMaxVelocity(qreal velocity)
 {
     if (velocity < 0)
@@ -47,6 +42,11 @@ void CarItem::setMaxVelocity(qreal velocity)
 void CarItem::setDesiredVelocity(qreal velocity)
 {
     desiredVelocity_ = velocity;
+}
+
+qreal CarItem::getDesiredVelocity() const
+{
+    return desiredVelocity_;
 }
 
 void CarItem::setDistance(qreal distance)
@@ -113,39 +113,34 @@ PathItem* CarItem::getNextPath()
     return *routeIter_++;
 }
 
-void CarItem::moveToNextPath(qreal distance)
+void CarItem::moveToRouteDistance(qreal routeDistance)
 {
-    PathItem* nextPath = getNextPath();
-    if (!nextPath)
+    if (!route_)
         return;
 
-    setDistance(distance);
-    nextPath->addCar(this);
+    auto path = route_->getPathAtDistance(routeDistance);
+    if (!path.first)
+        return;
+
+    setDistance(path.second);
+    path.first->addCar(this);
+}
+
+void CarItem::moveToNextPath()
+{
+    routeDistance_ += getDistance();
+    moveToRouteDistance(routeDistance_);
 }
 
 void CarItem::onReset()
 {
-    if (route_)
-        routeIter_ = route_->begin();
-
-    setDistance(getDefaultDistance());
+    routeDistance_ = 0;
+    moveToRouteDistance(getDefaultDistance());
 }
 
 void CarItem::onStep()
 {
-    if (maxVelocity_ < desiredVelocity_)
-        velocity_ = maxVelocity_;
-    else
-        velocity_ = desiredVelocity_;
-
-    if (velocity_ < 0)
-        qDebug() << velocity_;
-    distance_ += velocity_;
-}
-
-qreal CarItem::getVelocity() const
-{
-    return velocity_;
+    distance_ = getNextDistance();
 }
 
 const char* CarItem::getItemName()
@@ -159,7 +154,7 @@ bool CarItem::loadItem(QXmlStreamReader& xmlStream)
     qreal v = xmlStream.attributes().value("v").toDouble();
     qreal d = xmlStream.attributes().value("d").toDouble();
     setId(id);
-    setVelocity(v);
+    setDesiredVelocity(v);
     setDefaultDistance(d);
 
     if (xmlStream.readNextStartElement() && xmlStream.name() == "route-id") {
@@ -175,7 +170,7 @@ bool CarItem::loadItem(QXmlStreamReader& xmlStream)
 
 void CarItem::saveItem(QXmlStreamWriter& xmlStream) const
 {
-    xmlStream.writeAttribute("v", QString::number(getVelocity()));
+    xmlStream.writeAttribute("v", QString::number(getDesiredVelocity()));
     xmlStream.writeAttribute("d", QString::number(getDefaultDistance()));
 
     if (route_)
