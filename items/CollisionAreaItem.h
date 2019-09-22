@@ -12,7 +12,7 @@ public:
 
     bool containsGlobal(const QPointF point) const;
 
-    bool isOccupied() const { return occupied_; }
+    bool isOccupied() const { return occupiedCount_ > 0; }
     void setOccupied(bool occupied);
 
 protected:
@@ -24,7 +24,8 @@ private:
     void saveItem(QXmlStreamWriter& xmlStream) const override;
 
 private:
-    bool occupied_ = false;
+    //bool occupied_ = false;
+    int occupiedCount_ = 0;
 };
 
 #endif // COLLISIONRECTITEM_H

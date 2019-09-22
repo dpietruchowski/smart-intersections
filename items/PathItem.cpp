@@ -6,6 +6,7 @@
 #include <QPen>
 #include <QPainter>
 #include <QGraphicsScene>
+#include <IntersectionScene.h>
 #include <QDebug>
 
 #include "reverse.h"
@@ -29,42 +30,41 @@ PathItem::~PathItem()
 {
 }
 
-void PathItem::findEntries()
+void PathItem::findCollisionPaths()
 {
-    std::vector<CollisionAreaItem*> areas;
-    for(auto* item: scene()->items()) {
-        auto* area = dynamic_cast<CollisionAreaItem*>(item);
-        if (area) {
-            areas.push_back(area);
-        }
-    }
+    for(auto* area: getIntersection()->getItems<CollisionAreaItem>()) {
+        bool isInside = false;
+        qreal inDistance = 0;
+        for (qreal l = 0; l < path().length(); ++l) {
+            QPointF point = pointAtDistance(l);
+            bool contains = area->containsGlobal(point);
 
-    entries_.clear();
-    bool isInside = false;
-    for(qreal l = 0; l < path().length(); ++l) {
-        QPointF point = pointAtLength(l);
-        bool contains = false;
-        Entry entry = {l, EntryType::Invalid, {}};
-        for(auto* area: areas) {
-            if (area->containsGlobal(point)) {
-                contains = true;
-                entry.area = area;
-                break;
+            if (!isInside && contains) {
+                isInside = true;
+                inDistance = l;
+            } else if (isInside && !contains) {
+                isInside = false;
+                qreal outDistance = l;
+                collisionPaths_.emplace_back(inDistance, outDistance, area);
             }
         }
-
-        if (!isInside && contains) {
-            isInside = true;
-            entry.type = EntryType::In;
-            entries_.push_back(entry);
-        } else if (isInside && !contains) {
-            isInside = false;
-            entry.type = EntryType::Out;
-            if (entries_.size() > 0)
-                entry.area = entries_.back().area;
-            entries_.push_back(entry);
-        }
+        if (isInside)
+            collisionPaths_.emplace_back(inDistance, path().length(), area);
     }
+
+    std::sort(collisionPaths_.begin(), collisionPaths_.end(),
+              [] (CollisionPath& p1, CollisionPath& p2) {
+        return p1.getInDistance() < p2.getInDistance();
+    });
+}
+
+CollisionPath PathItem::getNextCollisionPath(qreal distance)
+{
+    for (auto& collisionPath: collisionPaths_) {
+        if (collisionPath.getInDistance() > distance)
+            return collisionPath;
+    }
+    return CollisionPath{};
 }
 
 void PathItem::onReset()
@@ -78,6 +78,14 @@ void PathItem::addCar(CarItem* car)
     updateCar(car);
     cars_.push_back(car);
 
+    for (auto cPath: collisionPaths_) {
+        bool isInside = cPath.isPartInside(car->getBackDistance(),
+                                           car->getFrontDistance());
+
+        if (isInside) {
+            cPath.getArea()->setOccupied(true);
+        }
+    }
     cars_.sort([](CarItem* a, CarItem* b){
         return a->getDistance() < b->getDistance();
     });
@@ -86,24 +94,6 @@ void PathItem::addCar(CarItem* car)
 void PathItem::removeCar(CarItem* car)
 {
     cars_.remove(car);
-}
-
-PathItem::Entry PathItem::getNextInEntry(qreal length) const
-{
-    for (auto& entry: entries_) {
-        if (length < entry.length && entry.isIn())
-            return entry;
-    }
-    return Entry();
-}
-
-PathItem::Entry PathItem::getNextEntry(qreal length) const
-{
-    for (auto& entry: entries_) {
-        if (length < entry.length)
-            return entry;
-    }
-    return Entry();
 }
 
 PainterPath PathItem::path() const
@@ -121,16 +111,15 @@ void PathItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 {
     QGraphicsPathItem::paint(painter, option, widget);
 
-    for (auto entry: entries_) {
-        QColor color = Qt::red;
-        if (entry.type == EntryType::Out)
-            color = Qt::blue;
-        painter->setBrush(QBrush(color));
-        painter->drawEllipse(path_.pointAtLength(entry.length), 3, 3);
+    for (auto collisionPath: collisionPaths_) {
+        painter->setBrush(QBrush(Qt::red));
+        painter->drawEllipse(path_.pointAtLength(collisionPath.getInDistance()), 3, 3);
+        painter->setBrush(QBrush(Qt::blue));
+        painter->drawEllipse(path_.pointAtLength(collisionPath.getOutDistance()), 3, 3);
     }
 }
 
-void PathItem::onStep()
+void PathItem::onPreStep()
 {
     // Limit to the next car
     for(auto iter = cars_.begin(); iter != cars_.end(); ++iter) {
@@ -144,26 +133,36 @@ void PathItem::onStep()
 
     // Limit to the next collision area
     for(auto iter = cars_.begin(); iter != cars_.end(); ++iter) {
-        auto entry = getNextInEntry((*iter)->getDistance());
-        if (entry.isValid() && entry.isIn() && entry.area->isOccupied()) {
-            qreal vMax = entry.length - (*iter)->getDistance() - 25;
-            (*iter)->limitCarVelocity(vMax);
-            if (vMax < 0)
+        auto* car = *iter;
+
+        auto collisionPath = getNextCollisionPath(car->getFrontDistance());
+        if (collisionPath.isValid()) {
+            if (collisionPath.getArea()->isOccupied()) {
+                qreal vMax = collisionPath.getInDistance() - car->getFrontDistance() - 1;
+                car->limitCarVelocity(vMax);
                 qDebug() << "vMAx" << vMax;
+            }
+        }
+
+        for (auto cPath: collisionPaths_) {
+            bool isInside = cPath.isPartInside(car->getBackDistance(),
+                                               car->getFrontDistance());
+            bool willBeInside = cPath.isPartInside(car->getNextBackDistance(),
+                                                   car->getNextFrontDistance());
+
+            if (isInside && !willBeInside) {
+                cPath.getArea()->setOccupied(false);
+            } else if (!isInside && willBeInside) {
+                cPath.getArea()->setOccupied(true);
+            }
         }
     }
+}
 
+void PathItem::onPostStep()
+{
     for (auto* car : cars_) {
         updateCar(car);
-
-        auto entry = getNextEntry(car->getPrevDistance());
-        if (!entry.isValid() || car->getDistance() < entry.length)
-            continue;
-        if (entry.isIn()) {
-            entry.area->setOccupied(true);
-        } else if (entry.isOut()) {
-            entry.area->setOccupied(false);
-        }
     }
 
     std::vector<CarItem*> removed;
@@ -176,8 +175,15 @@ void PathItem::onStep()
     });
 
     for (auto* car : removed) {
-        if (percentAtCar(car) >= 1)
-            car->moveToNextPath();
+        for (auto cPath: collisionPaths_) {
+            bool isInside = cPath.isPartInside(car->getBackDistance(),
+                                               car->getFrontDistance());
+
+            if (isInside) {
+                cPath.getArea()->setOccupied(false);
+            }
+        }
+        car->moveToNextPath();
     }
 }
 
@@ -211,9 +217,9 @@ qreal PathItem::percentAtCar(const CarItem* car)
     return path().percentAtLength(car->getDistance());
 }
 
-QPointF PathItem::pointAtLength(qreal length)
+QPointF PathItem::pointAtDistance(qreal distance)
 {
-    return path().pointAtLength(length) + pos();
+    return path().pointAtLength(distance) + pos();
 }
 
 const char* PathItem::getItemName()

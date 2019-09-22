@@ -32,6 +32,7 @@ SOURCES += \
         items/BaseItem.cpp \
         items/CarItem.cpp \
         items/PathItem.cpp \
+        scene/CollisionPath.cpp \
         scene/IntersectionScene.cpp \
         scene/PainterPath.cpp \
         scene/Route.cpp \
@@ -45,6 +46,7 @@ HEADERS += \
         items/CarItem.h \
         items/CollisionAreaItem.h \
         items/PathItem.h \
+        scene/CollisionPath.h \
         scene/IntersectionScene.h \
         scene/PainterPath.h \
         scene/Route.h \

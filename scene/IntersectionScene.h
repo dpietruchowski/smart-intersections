@@ -26,8 +26,9 @@ public:
     IntersectionScene();
 
     void reset();
-    void start(int msec = 50);
+    void start(int msec = 10);
     void stop();
+    void step();
 
     PathItem* addCarPath(const PainterPath &path,
                             const QPen &pen = QPen(),
@@ -42,22 +43,20 @@ public:
     bool load(QXmlStreamReader& xmlStream);
     void save(QXmlStreamWriter& xmlStream) const;
 
-protected:
-    void timerEvent(QTimerEvent *event) override;
-    void drawBackground(QPainter *painter, const QRectF &rect) override;
-    void onStep();
-
-private:
-    BaseItem* createItem(Item item) const;
+    template <class BaseItemClass>
+    std::vector<BaseItemClass*> getItems() const {
+        std::vector<BaseItemClass*> baseItems;
+        for (QGraphicsItem* item: items()) {
+            BaseItemClass* baseItem = dynamic_cast<BaseItemClass*>(item);
+            if (baseItem)
+                baseItems.push_back(baseItem);
+        }
+        return baseItems;
+    }
 
     template <class BaseItemClass>
     std::vector<BaseItemClass*> getSortedItems() const {
-        std::vector<BaseItemClass*> sorted;
-        for (QGraphicsItem* item: items()) {
-            BaseItemClass* pathItem = dynamic_cast<BaseItemClass*>(item);
-            if (pathItem)
-                sorted.push_back(pathItem);
-        }
+        std::vector<BaseItemClass*> sorted = getItems<BaseItemClass>();
         std::sort(sorted.begin(), sorted.end(),
                   [] (BaseItemClass* i1, BaseItemClass* i2) {
             return i1->getId() < i2->getId();
@@ -65,7 +64,13 @@ private:
         return sorted;
     }
 
-    void step();
+protected:
+    void timerEvent(QTimerEvent *event) override;
+    void drawBackground(QPainter *painter, const QRectF &rect) override;
+    void onStep();
+
+private:
+    BaseItem* createItem(Item item) const;
     int getNextId() const;
 
 private:

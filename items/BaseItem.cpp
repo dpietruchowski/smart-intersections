@@ -3,6 +3,7 @@
 #include <QGraphicsItem>
 #include <QPen>
 #include <QBrush>
+#include <IntersectionScene.h>
 
 BaseItem::BaseItem(int id): id_(id)
 {
@@ -14,9 +15,19 @@ void BaseItem::reset()
     onReset();
 }
 
+void BaseItem::prestep()
+{
+    onPreStep();
+}
+
 void BaseItem::step()
 {
     onStep();
+}
+
+void BaseItem::poststep()
+{
+    onPostStep();
 }
 
 bool BaseItem::load(QXmlStreamReader& xmlStream)
@@ -61,7 +72,7 @@ void BaseItem::setId(int id)
         text_->setText(QString::number(id));
 }
 
-void BaseItem::onStep()
+IntersectionScene* BaseItem::getIntersection()
 {
-
+    return dynamic_cast<IntersectionScene*>(getItem<QGraphicsItem>()->scene());
 }

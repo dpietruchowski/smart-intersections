@@ -28,7 +28,7 @@ CarItem::CarItem(QGraphicsItem* parent): CarItem(-1, parent)
 void CarItem::limitCarVelocity(qreal velocity)
 {
     if (velocity < maxVelocity_)
-        maxVelocity_ = velocity;
+        setMaxVelocity(velocity);
 }
 
 void CarItem::setVelocity(qreal velocity)
@@ -38,6 +38,9 @@ void CarItem::setVelocity(qreal velocity)
 
 void CarItem::setMaxVelocity(qreal velocity)
 {
+    if (velocity < 0)
+        velocity = 0;
+
     maxVelocity_ = velocity;
 }
 
@@ -61,9 +64,33 @@ qreal CarItem::getDistance() const
     return distance_;
 }
 
-qreal CarItem::getPrevDistance() const
+qreal CarItem::getFrontDistance() const
 {
-    return prevDistance_;
+    return getDistance() + 30;
+}
+
+qreal CarItem::getNextFrontDistance() const
+{
+    return getNextDistance() + 30;
+}
+
+qreal CarItem::getBackDistance() const
+{
+    return getDistance() - 30;
+}
+
+qreal CarItem::getNextBackDistance() const
+{
+    return getNextDistance() - 30;
+}
+
+qreal CarItem::getNextDistance() const
+{
+    qreal velocity = desiredVelocity_;
+    if (maxVelocity_ < desiredVelocity_)
+        velocity = maxVelocity_;
+
+    return distance_ + velocity;
 }
 
 qreal CarItem::getDefaultDistance() const
@@ -113,7 +140,6 @@ void CarItem::onStep()
 
     if (velocity_ < 0)
         qDebug() << velocity_;
-    prevDistance_ = distance_;
     distance_ += velocity_;
 }
 

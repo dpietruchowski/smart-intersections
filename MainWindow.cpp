@@ -8,6 +8,7 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QDebug>
+#include <QSpinBox>
 #include <QActionGroup>
 
 #include "scene/IntersectionScene.h"
@@ -66,6 +67,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->mdiArea->setViewMode(QMdiArea::TabbedView);
 
+    auto *spinBox = new QSpinBox(this);
+    spinBox->setRange(10, 200);
+    spinBox->setValue(20);
+    ui->toolBar->addWidget(spinBox);
     timer_ = new TimerWidget(this);
     ui->toolBar->addWidget(timer_);
 
@@ -109,11 +114,11 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     });
 
-    connect(ui->actionStart, &QAction::triggered, [this] {
+    connect(ui->actionStart, &QAction::triggered, [this, spinBox] {
         auto* intersection = currentIntersectionWidget();
         if (intersection) {
             timer_->start();
-            intersection->getScene().start();
+            intersection->getScene().start(spinBox->value());
         }
     });
     connect(ui->actionPause, &QAction::triggered, [this] {
@@ -129,6 +134,12 @@ MainWindow::MainWindow(QWidget *parent) :
             timer_->stop();
             intersection->getScene().stop();
             intersection->getScene().reset();
+        }
+    });
+    connect(ui->actionStep, &QAction::triggered, [this] {
+        auto* intersection = currentIntersectionWidget();
+        if (intersection) {
+            intersection->getScene().step();
         }
     });
 

@@ -57,6 +57,7 @@
    <addaction name="actionStart"/>
    <addaction name="actionPause"/>
    <addaction name="actionStop"/>
+   <addaction name="actionStep"/>
   </widget>
   <action name="actionNewIntersection">
    <property name="icon">
@@ -146,6 +147,15 @@
    </property>
    <property name="text">
     <string>SceneEditView</string>
+   </property>
+  </action>
+  <action name="actionStep">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/toolbutton/icons/Step.svg</normaloff>:/toolbutton/icons/Step.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Step</string>
    </property>
   </action>
  </widget>

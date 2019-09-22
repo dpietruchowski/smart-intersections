@@ -11,8 +11,6 @@ public:
     explicit CarItem(int id, QGraphicsItem * parent = nullptr);
     explicit CarItem(QGraphicsItem * parent = nullptr);
 
-    void reset();
-
     void limitCarVelocity(qreal velocity);
 
     void setVelocity(qreal velocity);
@@ -22,9 +20,18 @@ public:
     void setDefaultDistance(qreal distance);
 
     qreal getVelocity() const;
+
     qreal getDistance() const;
-    qreal getPrevDistance() const;
+    qreal getNextDistance() const;
+
+    qreal getFrontDistance() const;
+    qreal getNextFrontDistance() const;
+
+    qreal getBackDistance() const;
+    qreal getNextBackDistance() const;
+
     qreal getDefaultDistance() const;
+
 
     void setRoute(Route* route);
     PathItem* getNextPath();
@@ -45,7 +52,6 @@ private:
     qreal desiredVelocity_ = 0;
     qreal maxVelocity_ = 100;
     qreal defaultDistance_ = 0;
-    qreal prevDistance_ = 0;
     qreal distance_ = 0;
     Route* route_ = nullptr;
     Route::Iterator routeIter_;

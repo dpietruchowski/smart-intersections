@@ -5,6 +5,8 @@
 #include <QXmlStreamWriter>
 #include <QGraphicsSimpleTextItem>
 
+class IntersectionScene;
+
 class BaseItem
 {
 public:
@@ -13,7 +15,9 @@ public:
     virtual ~BaseItem() = default;
 
     void reset();
+    void prestep();
     void step();
+    void poststep();
 
     bool load(QXmlStreamReader& xmlStream);
     void save(QXmlStreamWriter& xmlStream);
@@ -26,10 +30,14 @@ public:
         return dynamic_cast<GraphicsClass*>(this);
     }
 
+    IntersectionScene* getIntersection();
+
 
 protected:
     virtual void onReset() {}
-    virtual void onStep();
+    virtual void onStep() {}
+    virtual void onPreStep() {}
+    virtual void onPostStep() {}
 
 private:
     virtual const char* getItemName() = 0;

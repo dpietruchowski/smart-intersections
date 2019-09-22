@@ -151,7 +151,7 @@ bool IntersectionScene::load(QXmlStreamReader& xmlStream)
     }
 
     for (auto* pathItem: getSortedItems<PathItem>()) {
-        pathItem->findEntries();
+        pathItem->findCollisionPaths();
     }
 
     return true;
@@ -206,14 +206,14 @@ void IntersectionScene::timerEvent(QTimerEvent* event)
 void IntersectionScene::step()
 {
     onStep();
-    for (auto* car: getSortedItems<PathItem>()) {
+    for (auto* car: getItems<BaseItem>()) {
+        car->prestep();
+    }
+    for (auto* car: getItems<BaseItem>()) {
         car->step();
     }
-    for (auto* car: getSortedItems<CarItem>()) {
-        car->step();
-    }
-    for (auto* car: getSortedItems<CollisionAreaItem>()) {
-        car->step();
+    for (auto* car: getItems<BaseItem>()) {
+        car->poststep();
     }
 }
 

@@ -1,6 +1,7 @@
 #include "CollisionAreaItem.h"
 
 #include <QBrush>
+#include <QDebug>
 
 CollisionAreaItem::CollisionAreaItem(int id, QGraphicsItem* parent): QGraphicsRectItem(parent), BaseItem(id)
 {
@@ -18,7 +19,12 @@ bool CollisionAreaItem::containsGlobal(const QPointF point) const
 
 void CollisionAreaItem::setOccupied(bool occupied)
 {
-    occupied_ = occupied;
+    //occupied_ = occupied;
+    if (occupied)
+        ++occupiedCount_;
+    else
+        --occupiedCount_;
+
     if (isOccupied()) {
         setBrush(QColor(91, 129, 213, 155));
     } else {
@@ -29,7 +35,13 @@ void CollisionAreaItem::setOccupied(bool occupied)
 
 void CollisionAreaItem::onReset()
 {
-    setOccupied(false);
+    occupiedCount_ = 0;
+    if (isOccupied()) {
+        setBrush(QColor(91, 129, 213, 155));
+    } else {
+        setBrush(QBrush());
+    }
+    update();
 }
 
 const char* CollisionAreaItem::getItemName()

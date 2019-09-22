@@ -7,6 +7,7 @@
 #include <QGraphicsPathItem>
 #include "BaseItem.h"
 #include "PainterPath.h"
+#include "CollisionPath.h"
 
 class CarItem;
 class CollisionAreaItem;
@@ -18,33 +19,11 @@ public:
     explicit PathItem(QGraphicsItem * parent = nullptr);
     ~PathItem() override;
 
-    enum class EntryType {
-        In,
-        Out,
-        Invalid
-    };
-
-    struct Entry {
-        qreal length = 0;
-        EntryType type = EntryType::Invalid;
-        //std::set<CollisionAreaItem*> areas;
-        CollisionAreaItem* area = nullptr;
-
-        bool isIn() const { return type == EntryType::In; }
-        bool isOut() const { return type == EntryType::Out; }
-        bool isValid() const {
-            if (!area) return false;
-            return type != EntryType::Invalid;
-        }
-    };
-
-    void findEntries();
+    void findCollisionPaths();
+    CollisionPath getNextCollisionPath(qreal distance);
 
     void addCar(CarItem* car);
     void removeCar(CarItem* car);
-
-    Entry getNextInEntry(qreal length) const;
-    Entry getNextEntry(qreal length) const;
 
     PainterPath path() const;
     void setPath(const PainterPath &path);
@@ -54,14 +33,15 @@ public:
                QWidget *widget = nullptr) override;
 
 protected:
-    void onStep() override;
+    void onPreStep() override;
+    void onPostStep() override;
     void onReset() override;
 
 private:
     void clearCars();
     std::pair<QPointF, qreal> transformAtCar(const CarItem* car);
     qreal percentAtCar(const CarItem* car);
-    QPointF pointAtLength(qreal length);
+    QPointF pointAtDistance(qreal distance);
     void updateCar(CarItem* car);
 
     const char* getItemName() override;
@@ -72,7 +52,7 @@ private:
 private:
     std::list<CarItem*> cars_;
     PainterPath path_;
-    std::vector<Entry> entries_;
+    std::vector<CollisionPath> collisionPaths_;
 
 };
 
