@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QStackedLayout>
 #include <QDebug>
+#include <QLabel>
 
 class TextEditView: public QObject
 {
@@ -70,8 +71,17 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
         scene_.load(r);
         scene_.reset();
     });
-
     ui->toolButton->setDefaultAction(ui->actionLoadScene);
+
+    label = new QLabel(this);
+    auto* layout = new QHBoxLayout(ui->graphicsView_2->viewport());
+    layout->addWidget(label);
+    label->setAlignment(Qt::AlignRight | Qt::AlignTop);
+
+    connect(&scene_, &IntersectionScene::stepped, [this] (qreal time) {
+        QString timeFormat = "Time: %1";
+        label->setText(timeFormat.arg(time));
+    });
 
     open(":/default.xml");
     setWindowTitle(name);

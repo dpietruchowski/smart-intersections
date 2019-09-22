@@ -21,6 +21,7 @@ public:
 
     void findCollisionPaths();
     CollisionPath getNextCollisionPath(qreal distance);
+    std::vector<CollisionPath> getCollisionPaths() const { return collisionPaths_; }
 
     void addCar(CarItem* car);
     void removeCar(CarItem* car);
@@ -52,7 +53,7 @@ private:
 private:
     std::list<CarItem*> cars_;
     PainterPath path_;
-    std::vector<CollisionPath> collisionPaths_;
+    std::vector<CollisionPath> collisionPaths_; // it may be better to use std::list instead because in some case we need to merge it from other path
 
 };
 

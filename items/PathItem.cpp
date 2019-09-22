@@ -125,9 +125,9 @@ void PathItem::onPreStep()
     for(auto iter = cars_.begin(); iter != cars_.end(); ++iter) {
         auto next = std::next(iter);
         qreal vMax = 100;
-        if (next != cars_.end()) {
+        /*if (next != cars_.end()) {
             vMax = (*next)->getDistance() - (*iter)->getDistance() - 50;
-        }
+        }*/
         (*iter)->setMaxVelocity(vMax);
     }
 
@@ -139,8 +139,7 @@ void PathItem::onPreStep()
         if (collisionPath.isValid()) {
             if (collisionPath.getArea()->isOccupied()) {
                 qreal vMax = collisionPath.getInDistance() - car->getFrontDistance() - 1;
-                car->limitCarVelocity(vMax);
-                qDebug() << "vMAx" << vMax;
+                //car->limitCarVelocity(vMax);
             }
         }
 

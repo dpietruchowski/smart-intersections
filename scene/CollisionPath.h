@@ -12,6 +12,8 @@ public:
     CollisionPath() = default;
     CollisionPath(qreal in, qreal out, CollisionAreaItem* area_);
 
+    void setInDistance(qreal distance);
+    void setOutDistance(qreal distance);
     qreal getInDistance() const { return distanceIn_; }
     qreal getOutDistance() const { return distanceOut_; }
     CollisionAreaItem* getArea() { return area_; }

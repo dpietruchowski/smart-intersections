@@ -91,15 +91,37 @@ std::pair<PathItem*, qreal> Route::getPathAtDistance(qreal distance) const
 std::vector<CollisionPath> Route::getCollisionPaths() const
 {
     std::vector<CollisionPath> collisionPaths;
-    qreal distance = 0;
-    for (auto* path: paths_) {
-        CollisionPath cPath = path->getNextCollisionPath(distance);
-        if (!cPath.isValid())
-            break;
 
-        collisionPaths.push_back(cPath);
-        distance = cPath.getInDistance();
+
+    /*PathItem* currPath = nullptr;
+    qreal distance = 0;
+    do {
+        auto path = getPathAtDistance(distance);
+        currPath = path.first;
+        if (currPath) {
+            CollisionPath cPath = currPath->getNextCollisionPath(distance);
+            if (cPath.isValid()) {
+
+                collisionPaths.push_back(cPath);
+                distance = cPath.getInDistance();
+            }
+        }
+    } while(currPath != nullptr);*/
+
+
+    qreal offsetDistance = 0;
+    for (auto* path: paths_) {
+        auto cPaths = path->getCollisionPaths();
+        for (auto cPath: cPaths) {
+            cPath.setInDistance(cPath.getInDistance() + offsetDistance);
+            cPath.setOutDistance(cPath.getOutDistance() + offsetDistance);
+            collisionPaths.push_back(cPath);
+        }
+
+        offsetDistance += path->path().length();
     }
+
+
     return collisionPaths;
 }
 

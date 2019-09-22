@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <QWidget>
+#include <QLabel>
 #include <QFileInfo>
 #include "scene/IntersectionScene.h"
 
@@ -38,6 +39,7 @@ public:
 private:
     QFileInfo fileinfo_;
     Ui::IntersectionWidget *ui;
+    QLabel* label;
     IntersectionScene scene_;
     bool saved_ = false;
 };

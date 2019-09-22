@@ -64,6 +64,11 @@ qreal CarItem::getDistance() const
     return distance_;
 }
 
+qreal CarItem::getRouteDistance() const
+{
+    return routeDistance_ + getDistance();
+}
+
 qreal CarItem::getFrontDistance() const
 {
     return getDistance() + 30;

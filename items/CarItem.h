@@ -7,6 +7,7 @@
 
 class CarItem : public QGraphicsPolygonItem, public BaseItem
 {
+    friend class CarAgent;
 public:
     explicit CarItem(int id, QGraphicsItem * parent = nullptr);
     explicit CarItem(QGraphicsItem * parent = nullptr);
@@ -18,6 +19,7 @@ public:
     qreal getDesiredVelocity() const;
 
     qreal getDistance() const;
+    qreal getRouteDistance() const;
     qreal getNextDistance() const;
 
     qreal getFrontDistance() const;

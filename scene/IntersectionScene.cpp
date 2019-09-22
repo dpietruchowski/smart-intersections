@@ -16,32 +16,39 @@ IntersectionScene::IntersectionScene()
 
 void IntersectionScene::reset()
 {
+    currentTime_ = 0;
     for (auto* baseItem: getSortedItems<BaseItem>()) {
         baseItem->reset();
     }
-    /*
-    std::vector<CarItem*> cars = getSortedItems<CarItem>();
-    for (auto* car: cars) {
-        car->moveToNextPath();
+
+    agents_.clear();
+    manager_.clear();
+
+    for (auto* area: getItems<CollisionAreaItem>()) {
+        manager_.addCollisionArea(area);
     }
 
-    std::sort(cars.begin(), cars.end(), [this] (CarItem* a, CarItem* b) {
-        return a->getDefaultDistance()> b->getDefaultDistance();
+    auto cars = getItems<CarItem>();
+    std::sort(cars.begin(), cars.end(), [](const CarItem* a, const CarItem* b) {
+        return a->getDistance() > b->getDistance();
     });
+    for (auto* car: cars) {
+        auto& agent = agents_.emplace_back(std::make_unique<CarAgent>(car));
+        agent->findCollisionPaths();
+    }
 
-    qreal i = 0.1;
-    qreal factor = 0.1;
-    qreal d = 100;
-    for(CarItem* car: cars) {
-        d = 100 - car->getDefaultDistance()/10;
-        qreal y = d/i;
-        qreal x = y*0.1125;
-        car->setVelocity(x);
-        factor *= 1.25;
-        if (factor > 0.25)
-            factor = 0.25;
-        i += factor;
-    }*/
+    for (auto& agent: agents_) {
+        CarAgent* carAgent = agent.get();
+        connect(carAgent, &CarAgent::registerMeAt,
+                [this, carAgent] (size_t id, int time, CollisionAreaItem* area) {
+            manager_.registerTime(id, carAgent, area, time);
+        });
+        connect(carAgent, &CarAgent::unregisterMeAt,
+                [this, carAgent] (size_t id, int oldTime, int time, CollisionAreaItem* area) {
+            manager_.unregisterTime(carAgent, area, oldTime);
+            manager_.registerTime(id, carAgent, area, time);
+        });
+    }
 }
 
 void IntersectionScene::start(int msec)
@@ -215,6 +222,7 @@ void IntersectionScene::step()
     for (auto* car: getItems<BaseItem>()) {
         car->poststep();
     }
+    emit stepped(currentTime_);
 }
 
 int IntersectionScene::getNextId() const
@@ -224,7 +232,10 @@ int IntersectionScene::getNextId() const
 
 void IntersectionScene::onStep()
 {
-
+    for(auto& agent: agents_) {
+        agent->step(currentTime_);
+    }
+    ++currentTime_;
 }
 
 BaseItem* IntersectionScene::createItem(IntersectionScene::Item item) const

@@ -1,6 +1,7 @@
 #ifndef INTERSECTIONSCENE_H
 #define INTERSECTIONSCENE_H
 
+#include <memory>
 #include <map>
 #include <QBasicTimer>
 #include <QGraphicsScene>
@@ -8,6 +9,8 @@
 #include <QXmlStreamWriter>
 
 #include "Route.h"
+#include "CarAgent.h"
+#include "IntersectionManager.h"
 
 class PainterPath;
 class PathItem;
@@ -16,6 +19,7 @@ class BaseItem;
 
 class IntersectionScene: public QGraphicsScene
 {
+    Q_OBJECT
 public:
     enum class Item {
         PathItem,
@@ -29,6 +33,7 @@ public:
     void start(int msec = 10);
     void stop();
     void step();
+    qreal getCurrentTime() const { return currentTime_; }
 
     PathItem* addCarPath(const PainterPath &path,
                             const QPen &pen = QPen(),
@@ -64,6 +69,9 @@ public:
         return sorted;
     }
 
+signals:
+    void stepped(qreal time);
+
 protected:
     void timerEvent(QTimerEvent *event) override;
     void drawBackground(QPainter *painter, const QRectF &rect) override;
@@ -75,7 +83,11 @@ private:
 
 private:
     QBasicTimer timer_;
+    int currentTime_ = 0;
     std::map<int, Route> routes_;
+
+    IntersectionManager manager_;
+    std::vector<std::unique_ptr<CarAgent>> agents_;
     mutable int nextId_ = 0;
 };
 

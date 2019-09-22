@@ -26,6 +26,8 @@ CONFIG += c++17
 QMAKE_CXXFLAGS += -std=c++17
 
 SOURCES += \
+        agents/CarAgent.cpp \
+        agents/IntersectionManager.cpp \
         items/CollisionAreaItem.cpp \
         main.cpp \
         MainWindow.cpp \
@@ -42,6 +44,8 @@ SOURCES += \
 
 HEADERS += \
         MainWindow.h \
+        agents/CarAgent.h \
+        agents/IntersectionManager.h \
         items/BaseItem.h \
         items/CarItem.h \
         items/CollisionAreaItem.h \
@@ -62,6 +66,7 @@ FORMS += \
 INCLUDEPATH += \
         scene \
         items \
+        agents \
         ui \
         utils
 

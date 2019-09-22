@@ -8,6 +8,16 @@ CollisionPath::CollisionPath(qreal in, qreal out, CollisionAreaItem* area)
 
 }
 
+void CollisionPath::setInDistance(qreal distance)
+{
+    distanceIn_ = distance;
+}
+
+void CollisionPath::setOutDistance(qreal distance)
+{
+    distanceOut_ = distance;
+}
+
 bool CollisionPath::isInside(qreal distance)
 {
     if (distance >= distanceIn_ && distance <= distanceOut_)
