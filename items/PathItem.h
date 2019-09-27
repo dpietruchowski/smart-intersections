@@ -14,6 +14,7 @@ class CollisionAreaItem;
 
 class PathItem: public QGraphicsPathItem, public BaseItem
 {
+    inline static const qreal MAXIMUM_VELOCITY = 5;
 public:
     explicit PathItem(int id, QGraphicsItem * parent = nullptr);
     explicit PathItem(QGraphicsItem * parent = nullptr);
@@ -52,6 +53,7 @@ private:
 
 private:
     std::list<CarItem*> cars_;
+    qreal vMax_ = MAXIMUM_VELOCITY;
     PainterPath path_;
     std::vector<CollisionPath> collisionPaths_; // it may be better to use std::list instead because in some case we need to merge it from other path
 

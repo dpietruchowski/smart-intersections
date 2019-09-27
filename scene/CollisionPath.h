@@ -6,7 +6,7 @@
 class CollisionAreaItem;
 class CarItem;
 
-class CollisionPath
+class  CollisionPath
 {
 public:
     CollisionPath() = default;

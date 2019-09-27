@@ -14,6 +14,7 @@ public:
 
     void limitCarVelocity(qreal velocity);
     void setMaxVelocity(qreal velocity);
+    qreal getMaxVelocity() const;
 
     void setDesiredVelocity(qreal velocity);
     qreal getDesiredVelocity() const;

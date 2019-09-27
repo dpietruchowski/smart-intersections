@@ -27,7 +27,15 @@ public:
         CollisionAreaItem
     };
 
+    enum Attribute {
+        NoAttribute = 0x0000,
+        CarPathQueue = 0x0001,
+        CollisionAreaBlock = 0x0002
+    };
+
     IntersectionScene();
+
+    IntersectionManager& getManager() { return manager_; }
 
     void reset();
     void start(int msec = 10);
@@ -47,6 +55,8 @@ public:
 
     bool load(QXmlStreamReader& xmlStream);
     void save(QXmlStreamWriter& xmlStream) const;
+
+    bool checkAttribute(Attribute attr) const;
 
     template <class BaseItemClass>
     std::vector<BaseItemClass*> getItems() const {
@@ -89,6 +99,8 @@ private:
     IntersectionManager manager_;
     std::vector<std::unique_ptr<CarAgent>> agents_;
     mutable int nextId_ = 0;
+
+    unsigned int attributes_ = NoAttribute;
 };
 
 #endif // INTERSECTIONSCENE_H

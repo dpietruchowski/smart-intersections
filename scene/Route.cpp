@@ -110,12 +110,19 @@ std::vector<CollisionPath> Route::getCollisionPaths() const
 
 
     qreal offsetDistance = 0;
+    CollisionPath lastCPath;
     for (auto* path: paths_) {
         auto cPaths = path->getCollisionPaths();
         for (auto cPath: cPaths) {
             cPath.setInDistance(cPath.getInDistance() + offsetDistance);
             cPath.setOutDistance(cPath.getOutDistance() + offsetDistance);
-            collisionPaths.push_back(cPath);
+            if (lastCPath.getArea() == cPath.getArea()
+                    && (lastCPath.getOutDistance() - cPath.getInDistance() < 0.01)) {
+                collisionPaths.back() = merge(lastCPath, cPath);
+            } else {
+                collisionPaths.push_back(cPath);
+            }
+            lastCPath = collisionPaths.back();
         }
 
         offsetDistance += path->path().length();

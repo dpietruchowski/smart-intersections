@@ -18,6 +18,7 @@ CarItem::CarItem(int id, QGraphicsItem* parent): QGraphicsPolygonItem(parent), B
 {
     setPolygon(carShape);
     text_ = new QGraphicsSimpleTextItem(QString::number(id), this);
+    text_->setFlag(ItemIgnoresTransformations);
 }
 
 CarItem::CarItem(QGraphicsItem* parent): CarItem(-1, parent)
@@ -37,6 +38,11 @@ void CarItem::setMaxVelocity(qreal velocity)
         velocity = 0;
 
     maxVelocity_ = velocity;
+}
+
+qreal CarItem::getMaxVelocity() const
+{
+    return maxVelocity_;
 }
 
 void CarItem::setDesiredVelocity(qreal velocity)

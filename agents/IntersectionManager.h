@@ -9,6 +9,7 @@ class CarAgent;
 
 class IntersectionManager: public QObject
 {
+    Q_OBJECT
 public:
     static const int TIMELAST = 1000000;
     IntersectionManager();
@@ -19,6 +20,12 @@ public:
 
     void registerTime(size_t id, CarAgent* agent, CollisionAreaItem* area, int time);
     void unregisterTime(CarAgent* agent, CollisionAreaItem* area, int time);
+
+signals:
+    void timeRegistered(int areaId, int carId, int time, int timespan);
+    void timeUnregistered(int areaId, int carId, int time, int timespan);
+    void newCollisionArea(int areaId);
+    void cleared();
 
 private:
     struct Timespans {

@@ -60,6 +60,12 @@ private:
     std::map<IntersectionWidget::View, QAction*> actions_;
 };
 
+MainWindow& MainWindow::Get()
+{
+    static MainWindow mainWindow;
+    return mainWindow;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)

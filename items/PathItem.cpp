@@ -6,11 +6,11 @@
 #include <QPen>
 #include <QPainter>
 #include <QGraphicsScene>
-#include <IntersectionScene.h>
 #include <QDebug>
 
 #include "reverse.h"
 #include "CollisionAreaItem.h"
+#include "IntersectionScene.h"
 
 PathItem::PathItem(int id, QGraphicsItem* parent): QGraphicsPathItem(parent), BaseItem(id)
 {
@@ -83,7 +83,7 @@ void PathItem::addCar(CarItem* car)
                                            car->getFrontDistance());
 
         if (isInside) {
-            cPath.getArea()->setOccupied(true);
+            cPath.getArea()->setOccupied(car, true);
         }
     }
     cars_.sort([](CarItem* a, CarItem* b){
@@ -121,13 +121,17 @@ void PathItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 
 void PathItem::onPreStep()
 {
+    IntersectionScene* intersection = getIntersection();
     // Limit to the next car
     for(auto iter = cars_.begin(); iter != cars_.end(); ++iter) {
         auto next = std::next(iter);
-        qreal vMax = 100;
-        /*if (next != cars_.end()) {
-            vMax = (*next)->getDistance() - (*iter)->getDistance() - 50;
-        }*/
+        qreal vMax = vMax_;
+        if (next != cars_.end()
+                && intersection->checkAttribute(IntersectionScene::CarPathQueue)) {
+            qreal distance = (*next)->getDistance() - (*iter)->getDistance() - 50;
+            if (distance < vMax)
+                vMax = distance;
+        }
         (*iter)->setMaxVelocity(vMax);
     }
 
@@ -137,15 +141,21 @@ void PathItem::onPreStep()
 
         auto collisionPath = getNextCollisionPath(car->getFrontDistance());
         if (collisionPath.isValid()) {
-            if (collisionPath.getArea()->isOccupied()) {
+            if (collisionPath.getArea()->isOccupied()
+                    && intersection->checkAttribute(IntersectionScene::CollisionAreaBlock)) {
                 qreal vMax = collisionPath.getInDistance() - car->getFrontDistance() - 1;
-                //car->limitCarVelocity(vMax);
+                car->limitCarVelocity(vMax);
             }
         }
 
         for (auto cPath: collisionPaths_) {
             bool isInside = cPath.isPartInside(car->getBackDistance(),
                                                car->getFrontDistance());
+            if (isInside)
+                cPath.getArea()->setOccupied(car, true);
+            else
+                cPath.getArea()->setOccupied(car, false);
+            /*
             bool willBeInside = cPath.isPartInside(car->getNextBackDistance(),
                                                    car->getNextFrontDistance());
 
@@ -153,7 +163,7 @@ void PathItem::onPreStep()
                 cPath.getArea()->setOccupied(false);
             } else if (!isInside && willBeInside) {
                 cPath.getArea()->setOccupied(true);
-            }
+            }*/
         }
     }
 }
@@ -179,7 +189,7 @@ void PathItem::onPostStep()
                                                car->getFrontDistance());
 
             if (isInside) {
-                cPath.getArea()->setOccupied(false);
+                cPath.getArea()->setOccupied(car, false);
             }
         }
         car->moveToNextPath();
@@ -233,6 +243,11 @@ bool PathItem::loadItem(QXmlStreamReader& xmlStream)
     qreal y = xmlStream.attributes().value("y").toDouble();
     setPos(x, y);
 
+    if (xmlStream.attributes().hasAttribute("v-max"))
+        vMax_ = xmlStream.attributes().value("v-max").toDouble();
+    else
+        vMax_ = MAXIMUM_VELOCITY;
+
     PainterPath path;
     path.load(xmlStream);
     setPath(path);
@@ -244,5 +259,7 @@ void PathItem::saveItem(QXmlStreamWriter& xmlStream) const
     QPointF point = pos();
     xmlStream.writeAttribute("x", QString::number(point.x()));
     xmlStream.writeAttribute("y", QString::number(point.y()));
+    if (vMax_ < MAXIMUM_VELOCITY)
+        xmlStream.writeAttribute("v-max", QString::number(vMax_));
     path_.save(xmlStream);
 }

@@ -40,6 +40,7 @@ SOURCES += \
         scene/Route.cpp \
         ui/IntersectionWidget.cpp \
         ui/TimerWidget.cpp \
+        ui/TimespanRegisterWidget.cpp \
         utils/reverse.cpp
 
 HEADERS += \
@@ -56,12 +57,14 @@ HEADERS += \
         scene/Route.h \
         ui/IntersectionWidget.h \
         ui/TimerWidget.h \
+        ui/TimespanRegisterWidget.h \
         utils/reverse.h
 
 FORMS += \
         MainWindow.ui \
         ui/IntersectionWidget.ui \
-        ui/TimerWidget.ui
+        ui/TimerWidget.ui \
+        ui/TimespanRegisterWidget.ui
 
 INCLUDEPATH += \
         scene \

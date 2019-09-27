@@ -6,6 +6,8 @@
 #include <QStackedLayout>
 #include <QDebug>
 #include <QLabel>
+#include "TimespanRegisterWidget.h"
+#include "MainWindow.h"
 
 class TextEditView: public QObject
 {
@@ -73,15 +75,20 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
     });
     ui->toolButton->setDefaultAction(ui->actionLoadScene);
 
-    label = new QLabel(this);
-    auto* layout = new QHBoxLayout(ui->graphicsView_2->viewport());
-    layout->addWidget(label);
-    label->setAlignment(Qt::AlignRight | Qt::AlignTop);
-
     connect(&scene_, &IntersectionScene::stepped, [this] (qreal time) {
         QString timeFormat = "Time: %1";
-        label->setText(timeFormat.arg(time));
+        ui->timeLabel->setText(timeFormat.arg(time));
     });
+
+    connect(&scene_.getManager(), &IntersectionManager::newCollisionArea,
+            ui->registerWidget, &TimespanRegisterWidget::addCollisionArea);
+    connect(&scene_.getManager(), &IntersectionManager::timeRegistered,
+            ui->registerWidget, &TimespanRegisterWidget::addTime);
+    connect(&scene_.getManager(), &IntersectionManager::timeUnregistered,
+            ui->registerWidget, &TimespanRegisterWidget::removeTime);
+    connect(&scene_.getManager(), &IntersectionManager::cleared,
+            ui->registerWidget, &TimespanRegisterWidget::clear);
+
 
     open(":/default.xml");
     setWindowTitle(name);

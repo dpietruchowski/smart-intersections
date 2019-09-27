@@ -39,7 +39,6 @@ public:
 private:
     QFileInfo fileinfo_;
     Ui::IntersectionWidget *ui;
-    QLabel* label;
     IntersectionScene scene_;
     bool saved_ = false;
 };

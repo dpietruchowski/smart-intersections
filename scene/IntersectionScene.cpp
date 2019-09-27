@@ -116,12 +116,19 @@ bool IntersectionScene::load(QXmlStreamReader& xmlStream)
         return false;
 
     clear();
+    attributes_ = NoAttribute;
     routes_.clear();
 
     qreal x = xmlStream.attributes().value("x").toDouble();
     qreal y = xmlStream.attributes().value("y").toDouble();
     qreal w = xmlStream.attributes().value("w").toDouble();
     qreal h = xmlStream.attributes().value("h").toDouble();
+
+    if (xmlStream.attributes().hasAttribute("car-path-queue"))
+        attributes_ |= CarPathQueue;
+
+    if (xmlStream.attributes().hasAttribute("collision-area-block"))
+        attributes_ |= CollisionAreaBlock;
 
     setSceneRect(x, y, w, h);
 
@@ -174,6 +181,11 @@ void IntersectionScene::save(QXmlStreamWriter& xmlStream) const
     xmlStream.writeAttribute("w", QString::number(rect.width()));
     xmlStream.writeAttribute("h", QString::number(rect.height()));
 
+    if (checkAttribute(CarPathQueue))
+        xmlStream.writeAttribute("car-path-queue", "");
+    if (checkAttribute(CollisionAreaBlock))
+        xmlStream.writeAttribute("collision-area-block", "");
+
     xmlStream.writeStartElement("roads");
     for (PathItem* pathItem: getSortedItems<PathItem>()) {
         pathItem->save(xmlStream);
@@ -201,6 +213,11 @@ void IntersectionScene::save(QXmlStreamWriter& xmlStream) const
     xmlStream.writeEndElement();
 }
 
+bool IntersectionScene::checkAttribute(Attribute attr) const
+{
+    return attributes_ & attr;
+}
+
 void IntersectionScene::timerEvent(QTimerEvent* event)
 {
     if (event->timerId() == timer_.timerId()) {
@@ -215,6 +232,9 @@ void IntersectionScene::step()
     onStep();
     for (auto* car: getItems<BaseItem>()) {
         car->prestep();
+    }
+    for(auto& agent: agents_) {
+        agent->step(currentTime_);
     }
     for (auto* car: getItems<BaseItem>()) {
         car->step();
@@ -232,9 +252,6 @@ int IntersectionScene::getNextId() const
 
 void IntersectionScene::onStep()
 {
-    for(auto& agent: agents_) {
-        agent->step(currentTime_);
-    }
     ++currentTime_;
 }
 

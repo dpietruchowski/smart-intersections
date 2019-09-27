@@ -17,6 +17,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    static MainWindow& Get();
+
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 

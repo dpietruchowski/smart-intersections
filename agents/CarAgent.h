@@ -19,6 +19,8 @@ public:
         CollisionPath path;
     };
 
+    CarItem* getCar() { return car_; }
+
     void step(int currTime);
 
     void findCollisionPaths();
@@ -31,6 +33,7 @@ signals:
 
 private:
     CarItem* car_ = nullptr;
+    qreal defaultVelocity_ = 0;
     std::vector<TimespanAtCollisionArea> timespansRegister;
 };
 

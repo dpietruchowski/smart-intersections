@@ -6,7 +6,7 @@
 
 CarAgent::CarAgent(CarItem* car): car_(car)
 {
-
+    defaultVelocity_ = car->getDesiredVelocity();
 }
 
 void CarAgent::step(int currTime)
@@ -22,21 +22,32 @@ void CarAgent::step(int currTime)
     }
 
     if (!currentTimespan) {
-        car_->setDesiredVelocity(5);
+        car_->setDesiredVelocity(defaultVelocity_);
         return;
     }
 
     //TODO: vmax
-    if (currentTimespan->time == 0)
-        emit registerMeAt(id, 10, currentTimespan->path.getArea());
+
+    qreal diffDistance = currentTimespan->path.getInDistance() - car_->getRouteDistance();
+
+    if (currentTimespan->time == 0) {
+        emit registerMeAt(id, diffDistance / (car_->getMaxVelocity() + 0.1), currentTimespan->path.getArea());
+    } else {
+        int newTime = diffDistance / (car_->getMaxVelocity() + 0.1);
+        if (newTime < currentTimespan->time) {
+            qInfo("ID: %d, new time: %d, max v: %f",
+                  car_->getId(), newTime, car_->getMaxVelocity());
+            emit unregisterMeAt(id, currentTimespan->time,
+                                currTime + newTime, currentTimespan->path.getArea());
+        }
+    }
 
     qreal diffTime = currentTimespan->time - currTime;
     if (diffTime < 0) {
         car_->setDesiredVelocity(0);
-        emit unregisterMeAt(id, currentTimespan->time, 10, currentTimespan->path.getArea());
-        qDebug() << "emitted unregister";
+        int newTime = diffDistance / (car_->getMaxVelocity() + 0.1);
+        emit unregisterMeAt(id, currentTimespan->time, currTime + newTime, currentTimespan->path.getArea());
     } else {
-        qreal diffDistance = currentTimespan->path.getInDistance() - car_->getRouteDistance();
         qreal velocity = diffDistance / diffTime;
         car_->setDesiredVelocity(velocity);
     }

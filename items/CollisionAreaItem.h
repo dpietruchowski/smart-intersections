@@ -1,8 +1,11 @@
 #ifndef COLLISIONRECTITEM_H
 #define COLLISIONRECTITEM_H
 
+#include <list>
 #include <QGraphicsRectItem>
 #include "BaseItem.h"
+
+class CarItem;
 
 class CollisionAreaItem : public QGraphicsRectItem, public BaseItem
 {
@@ -12,8 +15,8 @@ public:
 
     bool containsGlobal(const QPointF point) const;
 
-    bool isOccupied() const { return occupiedCount_ > 0; }
-    void setOccupied(bool occupied);
+    bool isOccupied() const { return carsInside_.size() > 0; }
+    void setOccupied(CarItem* car, bool occupied = true);
 
 protected:
     void onReset() override;
@@ -24,8 +27,9 @@ private:
     void saveItem(QXmlStreamWriter& xmlStream) const override;
 
 private:
+    std::list<CarItem*> carsInside_;
     //bool occupied_ = false;
-    int occupiedCount_ = 0;
+    //int occupiedCount_ = 0;
 };
 
 #endif // COLLISIONRECTITEM_H
