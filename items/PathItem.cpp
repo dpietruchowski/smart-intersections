@@ -79,8 +79,8 @@ void PathItem::addCar(CarItem* car)
     cars_.push_back(car);
 
     for (auto cPath: collisionPaths_) {
-        bool isInside = cPath.isPartInside(car->getBackDistance(),
-                                           car->getFrontDistance());
+        bool isInside = cPath.isPartInside(car->getDistance(CarItem::Back),
+                                           car->getDistance(CarItem::Front));
 
         if (isInside) {
             cPath.getArea()->setOccupied(car, true);
@@ -128,7 +128,7 @@ void PathItem::onPreStep()
         qreal vMax = vMax_;
         if (next != cars_.end()
                 && intersection->checkAttribute(IntersectionScene::CarPathQueue)) {
-            qreal distance = (*next)->getDistance() - (*iter)->getDistance() - 50;
+            qreal distance = (*next)->getDistance(CarItem::Back) - (*iter)->getDistance(CarItem::Front) - 2;
             if (distance < vMax)
                 vMax = distance;
         }
@@ -139,18 +139,19 @@ void PathItem::onPreStep()
     for(auto iter = cars_.begin(); iter != cars_.end(); ++iter) {
         auto* car = *iter;
 
-        auto collisionPath = getNextCollisionPath(car->getFrontDistance());
+        auto collisionPath = getNextCollisionPath(car->getDistance(CarItem::Front));
         if (collisionPath.isValid()) {
             if (collisionPath.getArea()->isOccupied()
                     && intersection->checkAttribute(IntersectionScene::CollisionAreaBlock)) {
-                qreal vMax = collisionPath.getInDistance() - car->getFrontDistance() - 1;
+                qreal vMax = collisionPath.getInDistance() - car->getDistance(CarItem::Front) - 0.1;
                 car->limitCarVelocity(vMax);
             }
         }
+        car->step();
 
         for (auto cPath: collisionPaths_) {
-            bool isInside = cPath.isPartInside(car->getBackDistance(),
-                                               car->getFrontDistance());
+            bool isInside = cPath.isPartInside(car->getDistance(CarItem::Back),
+                                               car->getDistance(CarItem::Front));
             if (isInside)
                 cPath.getArea()->setOccupied(car, true);
             else
@@ -185,8 +186,8 @@ void PathItem::onPostStep()
 
     for (auto* car : removed) {
         for (auto cPath: collisionPaths_) {
-            bool isInside = cPath.isPartInside(car->getBackDistance(),
-                                               car->getFrontDistance());
+            bool isInside = cPath.isPartInside(car->getDistance(CarItem::Back),
+                                               car->getDistance(CarItem::Front));
 
             if (isInside) {
                 cPath.getArea()->setOccupied(car, false);

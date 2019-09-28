@@ -3,6 +3,8 @@
 #include <QBrush>
 #include <QDebug>
 
+#include "CarItem.h"
+
 CollisionAreaItem::CollisionAreaItem(int id, QGraphicsItem* parent): QGraphicsRectItem(parent), BaseItem(id)
 {
     text_ = new QGraphicsSimpleTextItem(QString::number(id), this);
@@ -22,10 +24,13 @@ bool CollisionAreaItem::containsGlobal(const QPointF point) const
 void CollisionAreaItem::setOccupied(CarItem* car, bool occupied)
 {
     if (occupied) {
-        if (std::find(carsInside_.begin(), carsInside_.end(), car) == carsInside_.end())
+        if (std::find(carsInside_.begin(), carsInside_.end(), car) == carsInside_.end()) {
             carsInside_.push_back(car);
+            car->setBrush(QColor(91, 129, 213, 155));
+        }
     } else {
         carsInside_.remove(car);
+        car->setBrush(QBrush());
     }
 
 

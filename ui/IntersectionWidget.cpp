@@ -78,6 +78,9 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
     connect(&scene_, &IntersectionScene::stepped, [this] (qreal time) {
         QString timeFormat = "Time: %1";
         ui->timeLabel->setText(timeFormat.arg(time));
+        for(const auto& agent: scene_.getAgents()) {
+            ui->carTable->updateAgent(agent.get());
+        }
     });
 
     connect(&scene_.getManager(), &IntersectionManager::newCollisionArea,

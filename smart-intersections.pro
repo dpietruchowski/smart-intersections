@@ -38,6 +38,7 @@ SOURCES += \
         scene/IntersectionScene.cpp \
         scene/PainterPath.cpp \
         scene/Route.cpp \
+        ui/CarTable.cpp \
         ui/IntersectionWidget.cpp \
         ui/TimerWidget.cpp \
         ui/TimespanRegisterWidget.cpp \
@@ -55,6 +56,7 @@ HEADERS += \
         scene/IntersectionScene.h \
         scene/PainterPath.h \
         scene/Route.h \
+        ui/CarTable.h \
         ui/IntersectionWidget.h \
         ui/TimerWidget.h \
         ui/TimespanRegisterWidget.h \

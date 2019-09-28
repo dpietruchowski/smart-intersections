@@ -18,6 +18,11 @@ void CollisionPath::setOutDistance(qreal distance)
     distanceOut_ = distance;
 }
 
+qreal CollisionPath::getLength() const
+{
+    return getOutDistance() - getInDistance();
+}
+
 bool CollisionPath::isInside(qreal distance)
 {
     if (distance >= distanceIn_ && distance <= distanceOut_)

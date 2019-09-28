@@ -83,6 +83,8 @@ void TimespanRegisterWidget::addTime(int areaId, int carId, int time, int timesp
     item = new TableIntItem(QString::number(carId));
     tableWidget->setItem(0, Column::CarId, item);
     tableWidget->sortByColumn(0, Qt::AscendingOrder);
+
+    tableWidget->repaint();
 }
 
 void TimespanRegisterWidget::removeTime(int areaId, int carId, int time, int timespan)
@@ -97,6 +99,8 @@ void TimespanRegisterWidget::removeTime(int areaId, int carId, int time, int tim
 
     tableWidget->removeRow(row);
     tableWidget->sortByColumn(0, Qt::AscendingOrder);
+
+    tableWidget->repaint();
 }
 
 void TimespanRegisterWidget::clear()

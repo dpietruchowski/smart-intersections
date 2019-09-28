@@ -14,7 +14,7 @@ class CollisionAreaItem;
 
 class PathItem: public QGraphicsPathItem, public BaseItem
 {
-    inline static const qreal MAXIMUM_VELOCITY = 5;
+    inline static const qreal MAXIMUM_VELOCITY = 15;
 public:
     explicit PathItem(int id, QGraphicsItem * parent = nullptr);
     explicit PathItem(QGraphicsItem * parent = nullptr);

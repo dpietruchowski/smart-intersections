@@ -18,7 +18,7 @@ public:
     void clear();
     void addCollisionArea(CollisionAreaItem* area);
 
-    void registerTime(size_t id, CarAgent* agent, CollisionAreaItem* area, int time);
+    void registerTime(size_t id, CarAgent* agent, CollisionAreaItem* area, int time, int timespan);
     void unregisterTime(CarAgent* agent, CollisionAreaItem* area, int time);
 
 signals:
@@ -36,6 +36,7 @@ private:
     using TimespansRegister = std::map<int, Timespans>;
 
     int getNextAvailableTime(TimespansRegister& timespansRegister, int time);
+    int getNextAvailableTime(TimespansRegister& timespansRegister, int time, int timespan);
 
 private:
     std::map<CollisionAreaItem*, TimespansRegister> areas_;

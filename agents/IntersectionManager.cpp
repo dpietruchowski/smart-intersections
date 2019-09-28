@@ -29,21 +29,23 @@ void IntersectionManager::addCollisionArea(CollisionAreaItem* area)
     emit newCollisionArea(area->getId());
 }
 
-void IntersectionManager::registerTime(size_t id, CarAgent* agent, CollisionAreaItem* area, int time)
+void IntersectionManager::registerTime(size_t id, CarAgent* agent, CollisionAreaItem* area, int time, int timespan)
 {
     if (areas_.count(area) == 0) {
         qWarning("This collision area doesn't exist in intersection");
         return;
     }
 
+    if (timespan > 100)
+        timespan = 100;
     auto& timespansRegister = areas_[area];
-    int availableTime = getNextAvailableTime(timespansRegister, time);
+    int availableTime = getNextAvailableTime(timespansRegister, time, timespan);
     timespansRegister[availableTime].time = availableTime;
-    timespansRegister[availableTime].timespan = 30;
+    timespansRegister[availableTime].timespan = timespan;
     timespansRegister[availableTime].agent = agent;
 
     agent->registerAt(id, availableTime, area);
-    emit timeRegistered(area->getId(), agent->getCar()->getId(), availableTime, 30);
+    emit timeRegistered(area->getId(), agent->getCar()->getId(), availableTime, timespan);
 }
 
 void IntersectionManager::unregisterTime(CarAgent* agent, CollisionAreaItem* area, int time)
@@ -58,8 +60,10 @@ void IntersectionManager::unregisterTime(CarAgent* agent, CollisionAreaItem* are
     if (agent != timespansRegister[time].agent)
         qWarning("Agents not match");
 
+    int timespan = timespansRegister[time].timespan;
+
     timespansRegister.erase(time);
-    emit timeUnregistered(area->getId(), agent->getCar()->getId(), time, 10);
+    emit timeUnregistered(area->getId(), agent->getCar()->getId(), time, timespan);
 }
 
 int IntersectionManager::getNextAvailableTime(TimespansRegister& timespansRegister, int time)
@@ -75,4 +79,57 @@ int IntersectionManager::getNextAvailableTime(TimespansRegister& timespansRegist
             time = end;
     }
     return time;
+}
+
+int IntersectionManager::getNextAvailableTime(IntersectionManager::TimespansRegister& timespansRegister, int time, int timespan)
+{
+    auto begin = timespansRegister.begin();
+    auto end = timespansRegister.end();
+    for (auto iter = begin; iter != end; ++iter) {
+        int begin = iter->second.time;
+        int end = begin + iter->second.timespan;
+        if (time + timespan <= begin)
+            return time;
+        else if (time >= begin && time < end)
+            time = end;
+    }
+    return time;
+    /*
+    auto end = timespansRegister.end();
+
+    auto iter = timespansRegister.lower_bound(time);
+    auto prev = iter;
+    if (iter != timespansRegister.begin())
+        prev = std::prev(iter);
+
+    int tBegin = prev->second.time;
+    int tEnd = tBegin + prev->second.timespan;
+    int tNextBegin = iter->second.time;
+    if (time + timespan < tBegin) {
+        return time;
+    } else if (time > tEnd && time + timespan < tNextBegin) {
+        return time;
+    }
+
+    for (;iter != end; ++iter) {
+        auto next = std::next(iter);
+        int tBegin = iter->second.time;
+        int tEnd = tBegin + iter->second.timespan;
+        if (next != end) {
+            int tNextBegin = next->second.time;
+            if (tNextBegin - tEnd < 0) qWarning("Diff is lower than 0");
+            if (timespan <= tNextBegin - tEnd) {
+                return tEnd;
+            }
+        } else {
+            if (time > tEnd) {
+                return time;
+            } else {
+                return tEnd;
+            }
+        }
+    }
+
+    return time;
+    */
 }

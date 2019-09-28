@@ -36,6 +36,7 @@ public:
     IntersectionScene();
 
     IntersectionManager& getManager() { return manager_; }
+    std::vector<std::unique_ptr<CarAgent>>& getAgents() { return agents_; }
 
     void reset();
     void start(int msec = 10);

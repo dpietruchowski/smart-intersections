@@ -4,6 +4,7 @@
 #include "PathItem.h"
 
 #include <QDebug>
+#include <QPainter>
 
 namespace {
 
@@ -47,12 +48,38 @@ qreal CarItem::getMaxVelocity() const
 
 void CarItem::setDesiredVelocity(qreal velocity)
 {
+    if (velocity < 0)
+        velocity = 0;
     desiredVelocity_ = velocity;
 }
 
 qreal CarItem::getDesiredVelocity() const
 {
     return desiredVelocity_;
+}
+
+qreal CarItem::getDistance(CarItem::CarPart part) const
+{
+    return getDistance(distance_, part);
+}
+
+qreal CarItem::getRouteDistance(CarItem::CarPart part) const
+{
+    return getDistance(routeDistance_ + getDistance(), part);
+}
+
+qreal CarItem::getNextDistance(CarItem::CarPart part) const
+{
+    qreal velocity = desiredVelocity_;
+    if (maxVelocity_ < desiredVelocity_)
+        velocity = maxVelocity_;
+
+    return getDistance(distance_ + velocity, part);
+}
+
+qreal CarItem::getLength() const
+{
+    return getDistance(0, CarPart::Front) - getDistance(0, CarPart::Back);
 }
 
 void CarItem::setDistance(qreal distance)
@@ -63,45 +90,6 @@ void CarItem::setDistance(qreal distance)
 void CarItem::setDefaultDistance(qreal distance)
 {
     defaultDistance_ = distance;
-}
-
-qreal CarItem::getDistance() const
-{
-    return distance_;
-}
-
-qreal CarItem::getRouteDistance() const
-{
-    return routeDistance_ + getDistance();
-}
-
-qreal CarItem::getFrontDistance() const
-{
-    return getDistance() + 30;
-}
-
-qreal CarItem::getNextFrontDistance() const
-{
-    return getNextDistance() + 30;
-}
-
-qreal CarItem::getBackDistance() const
-{
-    return getDistance() - 30;
-}
-
-qreal CarItem::getNextBackDistance() const
-{
-    return getNextDistance() - 30;
-}
-
-qreal CarItem::getNextDistance() const
-{
-    qreal velocity = desiredVelocity_;
-    if (maxVelocity_ < desiredVelocity_)
-        velocity = maxVelocity_;
-
-    return distance_ + velocity;
 }
 
 qreal CarItem::getDefaultDistance() const
@@ -143,10 +131,29 @@ void CarItem::moveToNextPath()
     moveToRouteDistance(routeDistance_);
 }
 
+void CarItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    QGraphicsPolygonItem::paint(painter, option, widget);
+
+    painter->setBrush(QBrush(Qt::red));
+    painter->drawEllipse(0, 0, 3, 3);
+}
+
 void CarItem::onReset()
 {
     routeDistance_ = 0;
     moveToRouteDistance(getDefaultDistance());
+    setBrush(QBrush());
+}
+
+qreal CarItem::getDistance(qreal distance, CarItem::CarPart part) const
+{
+    switch (part) {
+        case CarPart::Front: return distance + 30;
+        case CarPart::Center: return distance;
+        case CarPart::Back: return distance - 30;
+    }
+    return distance;
 }
 
 void CarItem::onStep()

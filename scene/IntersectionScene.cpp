@@ -40,13 +40,13 @@ void IntersectionScene::reset()
     for (auto& agent: agents_) {
         CarAgent* carAgent = agent.get();
         connect(carAgent, &CarAgent::registerMeAt,
-                [this, carAgent] (size_t id, int time, CollisionAreaItem* area) {
-            manager_.registerTime(id, carAgent, area, time);
+                [this, carAgent] (size_t id, int time, int timespan, CollisionAreaItem* area) {
+            manager_.registerTime(id, carAgent, area, time, timespan);
         });
         connect(carAgent, &CarAgent::unregisterMeAt,
-                [this, carAgent] (size_t id, int oldTime, int time, CollisionAreaItem* area) {
+                [this, carAgent] (size_t id, int oldTime, int time, int timespan, CollisionAreaItem* area) {
             manager_.unregisterTime(carAgent, area, oldTime);
-            manager_.registerTime(id, carAgent, area, time);
+            manager_.registerTime(id, carAgent, area, time, timespan);
         });
     }
 }
@@ -233,11 +233,15 @@ void IntersectionScene::step()
     for (auto* car: getItems<BaseItem>()) {
         car->prestep();
     }
+    for (auto* car: getItems<BaseItem>()) {
+        //car->step();
+    }
+    std::sort(agents_.begin(), agents_.end(),
+              [] (auto& a1, auto& a2) {
+        return a1->getCar()->getRouteDistance() > a2->getCar()->getRouteDistance();
+    });
     for(auto& agent: agents_) {
         agent->step(currentTime_);
-    }
-    for (auto* car: getItems<BaseItem>()) {
-        car->step();
     }
     for (auto* car: getItems<BaseItem>()) {
         car->poststep();

@@ -16,6 +16,7 @@ public:
     void setOutDistance(qreal distance);
     qreal getInDistance() const { return distanceIn_; }
     qreal getOutDistance() const { return distanceOut_; }
+    qreal getLength() const;
     CollisionAreaItem* getArea() { return area_; }
 
     bool isValid() const { return area_ != nullptr; }

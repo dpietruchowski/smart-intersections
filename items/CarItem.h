@@ -12,6 +12,12 @@ public:
     explicit CarItem(int id, QGraphicsItem * parent = nullptr);
     explicit CarItem(QGraphicsItem * parent = nullptr);
 
+    enum CarPart {
+        Front,
+        Center,
+        Back
+    };
+
     void limitCarVelocity(qreal velocity);
     void setMaxVelocity(qreal velocity);
     qreal getMaxVelocity() const;
@@ -19,24 +25,22 @@ public:
     void setDesiredVelocity(qreal velocity);
     qreal getDesiredVelocity() const;
 
-    qreal getDistance() const;
-    qreal getRouteDistance() const;
-    qreal getNextDistance() const;
-
-    qreal getFrontDistance() const;
-    qreal getNextFrontDistance() const;
-
-    qreal getBackDistance() const;
-    qreal getNextBackDistance() const;
+    qreal getDistance(CarPart part = Center) const;
+    qreal getRouteDistance(CarPart part = Center) const;
+    qreal getNextDistance(CarPart part = Center) const;
+    qreal getLength() const;
 
     void setDefaultDistance(qreal distance);
     qreal getDefaultDistance() const;
-
 
     void setRoute(Route* route);
     PathItem* getNextPath();
     void moveToRouteDistance(qreal routeDistance);
     void moveToNextPath();
+
+    void paint(QPainter *painter,
+               const QStyleOptionGraphicsItem *option,
+               QWidget *widget = nullptr) override;
 
 protected:
     void setDistance(qreal distance);
@@ -46,6 +50,7 @@ protected:
     void onReset() override;
 
 private:
+    qreal getDistance(qreal distance, CarPart part = Center) const;
     const char* getItemName() override;
     bool loadItem(QXmlStreamReader& xmlStream) override;
     void saveItem(QXmlStreamWriter& xmlStream) const override;
