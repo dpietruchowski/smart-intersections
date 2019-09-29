@@ -46,6 +46,7 @@ bool BaseItem::load(QXmlStreamReader& xmlStream)
         p.setWidth(2);
         p.setColor(color);
         thisItem->setPen(p);
+        pen_ = p;
     }
     return loadItem(xmlStream);
 }
@@ -68,6 +69,9 @@ void BaseItem::save(QXmlStreamWriter& xmlStream)
 void BaseItem::setId(int id)
 {
     id_ = id;
+    QGraphicsItem* thisItem = getItem<QGraphicsItem>();
+    if (thisItem)
+        thisItem->setToolTip(getItemName() + QString(" id: ")+ QString::number(id_));
     if (text_)
         text_->setText(QString::number(id));
 }

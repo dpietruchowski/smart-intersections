@@ -4,6 +4,8 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <QGraphicsSimpleTextItem>
+#include <QPen>
+#include <QBrush>
 
 class IntersectionScene;
 
@@ -46,6 +48,8 @@ private:
 
 protected:
     QGraphicsSimpleTextItem* text_ = nullptr;
+    QPen pen_;
+    QBrush brush_;
 
 private:
     int id_ = -1;

@@ -8,6 +8,9 @@
 #include <QLabel>
 #include "TimespanRegisterWidget.h"
 #include "MainWindow.h"
+#include "CollisionAreaItem.h"
+
+#include <QGraphicsItem>
 
 class TextEditView: public QObject
 {
@@ -81,6 +84,15 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
         for(const auto& agent: scene_.getAgents()) {
             ui->carTable->updateAgent(agent.get());
         }
+        ui->frame->setCurrentTime(scene_.getCurrentTime());
+        ui->frame->update();
+    });
+    connect(&scene_, &IntersectionScene::focusItemChanged,
+            [this] (QGraphicsItem* newFocusItem) {
+        CollisionAreaItem* newArea = dynamic_cast<CollisionAreaItem*>(newFocusItem);
+        ui->frame->update();
+        if (newArea)
+            ui->registerWidget->setCurrentArea(newArea->getId());
     });
 
     connect(&scene_.getManager(), &IntersectionManager::newCollisionArea,
@@ -91,6 +103,8 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
             ui->registerWidget, &TimespanRegisterWidget::removeTime);
     connect(&scene_.getManager(), &IntersectionManager::cleared,
             ui->registerWidget, &TimespanRegisterWidget::clear);
+
+    ui->frame->setManager(&scene_.getManager());
 
 
     open(":/default.xml");

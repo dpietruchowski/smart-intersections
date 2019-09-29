@@ -16,6 +16,7 @@ public:
 
     struct TimespanAtCollisionArea {
         int time = 0;
+        int timespan = 0;
         CollisionPath path;
     };
 
@@ -26,15 +27,21 @@ public:
 
     void findCollisionPaths();
 
-    void registerAt(size_t id, int time, CollisionAreaItem *area);
+    void registerAt(size_t id, int time, int timespan, CollisionAreaItem *area);
 
 signals:
     void registerMeAt(size_t id, int time, int timespan, CollisionAreaItem* area);
     void unregisterMeAt(size_t id, int oldtime, int newtime, int timespan, CollisionAreaItem* area);
 
 private:
+    void registerFor(size_t id, TimespanAtCollisionArea& taca, int currTime);
+    qreal countDiffDistance(TimespanAtCollisionArea& taca);
+    qreal countAreaLength(TimespanAtCollisionArea& taca);
+
+private:
     CarItem* car_ = nullptr;
     qreal defaultVelocity_ = 0;
+    qreal vMax_ = 1000;
     std::vector<TimespanAtCollisionArea> timespansRegister;
 };
 

@@ -58,6 +58,7 @@
    <addaction name="actionPause"/>
    <addaction name="actionStop"/>
    <addaction name="actionStep"/>
+   <addaction name="actionGoTo"/>
   </widget>
   <action name="actionNewIntersection">
    <property name="icon">
@@ -156,6 +157,15 @@
    </property>
    <property name="text">
     <string>Step</string>
+   </property>
+  </action>
+  <action name="actionGoTo">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/toolbutton/icons/GoTo.svg</normaloff>:/toolbutton/icons/GoTo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>GoTo</string>
    </property>
   </action>
  </widget>

@@ -42,7 +42,7 @@ public:
     void start(int msec = 10);
     void stop();
     void step();
-    qreal getCurrentTime() const { return currentTime_; }
+    int getCurrentTime() const { return currentTime_; }
 
     PathItem* addCarPath(const PainterPath &path,
                             const QPen &pen = QPen(),

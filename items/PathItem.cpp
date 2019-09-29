@@ -19,6 +19,7 @@ PathItem::PathItem(int id, QGraphicsItem* parent): QGraphicsPathItem(parent), Ba
     path.quadTo(10, 20, 20, 20);
     path.lineTo(10, 10);
     setPath(path);
+    setToolTip(QString::number(id));
 }
 
 PathItem::PathItem(QGraphicsItem* parent): PathItem(-1, parent)
@@ -150,9 +151,9 @@ void PathItem::onPreStep()
         car->step();
 
         for (auto cPath: collisionPaths_) {
-            bool isInside = cPath.isPartInside(car->getDistance(CarItem::Back),
+            bool isInsideArea = cPath.isPartInside(car->getDistance(CarItem::Back),
                                                car->getDistance(CarItem::Front));
-            if (isInside)
+            if (isInsideArea)
                 cPath.getArea()->setOccupied(car, true);
             else
                 cPath.getArea()->setOccupied(car, false);

@@ -1,5 +1,6 @@
 #include "CollisionAreaItem.h"
 
+#include <QPen>
 #include <QBrush>
 #include <QDebug>
 
@@ -9,6 +10,7 @@ CollisionAreaItem::CollisionAreaItem(int id, QGraphicsItem* parent): QGraphicsRe
 {
     text_ = new QGraphicsSimpleTextItem(QString::number(id), this);
     text_->setFlag(ItemIgnoresTransformations);
+    setFlag(QGraphicsItem::ItemIsFocusable);
 }
 
 CollisionAreaItem::CollisionAreaItem(QGraphicsItem* parent): CollisionAreaItem(-1, parent)
@@ -26,11 +28,11 @@ void CollisionAreaItem::setOccupied(CarItem* car, bool occupied)
     if (occupied) {
         if (std::find(carsInside_.begin(), carsInside_.end(), car) == carsInside_.end()) {
             carsInside_.push_back(car);
-            car->setBrush(QColor(91, 129, 213, 155));
+            car->setInside(this, true);
         }
     } else {
         carsInside_.remove(car);
-        car->setBrush(QBrush());
+        car->setInside(this, false);
     }
 
 
@@ -70,6 +72,18 @@ void CollisionAreaItem::onReset()
         setBrush(QBrush());
     }
     update();
+}
+
+void CollisionAreaItem::focusInEvent(QFocusEvent* event)
+{
+    QPen pen = QColor(140,0,0);
+    pen.setWidth(2);
+    setPen(pen);
+}
+
+void CollisionAreaItem::focusOutEvent(QFocusEvent* event)
+{
+    setPen(pen_);
 }
 
 const char* CollisionAreaItem::getItemName()

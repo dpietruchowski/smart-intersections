@@ -1,0 +1,102 @@
+
+<intersection x="-1023.5" y="-251" w="1824.5" h="1263.5">
+    <roads>
+        <path id="0" x="-1000" y="0" color="#8b0000">
+            <line-to>
+                <point x="1300" y="0"/>
+            </line-to>
+        </path>
+        <path id="1" x="0" y="1000" color="#00008b">
+            <line-to>
+                <point x="0" y="-1300"/>
+            </line-to>
+        </path>
+        <path id="2" x="-707" y="707" color="#00008b">
+            <line-to>
+                <point x="1300" y="-1300"/>
+            </line-to>
+        </path>
+    </roads>
+    <routes>
+        <route id="0">
+            <path-id>0</path-id>
+        </route>
+        <route id="1">
+            <path-id>1</path-id>
+        </route>
+        <route id="2">
+            <path-id>2</path-id>
+        </route>
+    </routes>
+    <cars>
+        <car id="1" v="9.54866" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="2" v="19.2694" d="0">
+            <route-id>1</route-id>
+        </car>
+        <car id="3" v="11.569" d="0">
+            <route-id>1</route-id>
+        </car>
+        <car id="4" v="3.06577" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="5" v="12.2927" d="0">
+            <route-id>1</route-id>
+        </car>
+        <car id="6" v="6.4171" d="0">
+            <route-id>2</route-id>
+        </car>
+        <car id="7" v="16.8235" d="0">
+            <route-id>1</route-id>
+        </car>
+        <car id="8" v="4.61985" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="9" v="2.24907" d="0">
+            <route-id>1</route-id>
+        </car>
+        <car id="10" v="5.73556" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="11" v="15.6913" d="0">
+            <route-id>1</route-id>
+        </car>
+        <car id="12" v="12.4355" d="0">
+            <route-id>2</route-id>
+        </car>
+        <car id="13" v="14.625" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="14" v="15.1765" d="0">
+            <route-id>1</route-id>
+        </car>
+        <car id="16" v="3.81533" d="0">
+            <route-id>2</route-id>
+        </car>
+        <car id="17" v="18.2857" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="18" v="17.779" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="19" v="19.5029" d="0">
+            <route-id>2</route-id>
+        </car>
+        <car id="20" v="7.73845" d="0">
+            <route-id>1</route-id>
+        </car>
+        <car id="21" v="2.52525" d="0">
+            <route-id>2</route-id>
+        </car>
+        <car id="22" v="14" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="23" v="2.05424" d="0">
+            <route-id>2</route-id>
+        </car>
+        <car id="24" v="1.64805" d="0">
+            <route-id>1</route-id>
+        </car>
+    </cars>
+</intersection>

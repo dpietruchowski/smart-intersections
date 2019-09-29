@@ -1,0 +1,47 @@
+
+<intersection x="-23.5" y="-251" w="824.5" h="263.5">
+    <roads>
+        <path id="0" x="0" y="0" color="#8b0000">
+            <line-to>
+                <point x="400" y="0"/>
+            </line-to>
+        </path>
+        <path id="1" x="400" y="0" color="#00008b">
+            <line-to>
+                <point x="400" y="0"/>
+            </line-to>
+        </path>
+        <path id="2" x="400" y="0" color="#006400">
+            <quad-to>
+                <point x="170" y="0"/>
+                <point x="170" y="-250"/>
+            </quad-to>
+        </path>
+        <path id="3" x="800" y="-100" color="#000000">
+            <line-to>
+                <point x="-800" y="0"/>
+            </line-to>
+        </path>
+    </roads>
+    <routes>
+        <route id="0">
+            <path-id>0</path-id>
+            <path-id>1</path-id>
+        </route>
+        <route id="1">
+            <path-id>0</path-id>
+            <path-id>2</path-id>
+        </route>
+    </routes>
+    <cars>
+        <car id="1" v="0" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="2" v="0" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="3" v="0" d="0">
+            <route-id>1</route-id>
+        </car>
+    </cars>
+</intersection>

@@ -21,6 +21,9 @@ public:
 protected:
     void onReset() override;
 
+    void focusInEvent(QFocusEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
+
 private:
     const char* getItemName() override;
     bool loadItem(QXmlStreamReader& xmlStream) override;

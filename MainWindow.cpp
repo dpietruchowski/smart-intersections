@@ -148,6 +148,15 @@ MainWindow::MainWindow(QWidget *parent) :
             intersection->getScene().step();
         }
     });
+    connect(ui->actionGoTo, &QAction::triggered, [this, spinBox] {
+        auto* intersection = currentIntersectionWidget();
+        if (intersection) {
+            int nSteps = spinBox->value();
+            for (int i = 0; i < nSteps; ++i) {
+                intersection->getScene().step();
+            }
+        }
+    });
 
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, [this] (QMdiSubWindow* window) {
         if (window)

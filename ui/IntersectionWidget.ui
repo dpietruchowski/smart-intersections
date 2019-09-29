@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>New Intersection</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
@@ -119,6 +119,22 @@
      </widget>
     </widget>
    </item>
+   <item>
+    <widget class="TimespanWindows" name="frame">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
   </layout>
   <action name="actionLoadScene">
    <property name="text">
@@ -137,6 +153,12 @@
    <class>CarTable</class>
    <extends>QWidget</extends>
    <header>CarTable.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TimespanWindows</class>
+   <extends>QFrame</extends>
+   <header>TimespanWindows.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

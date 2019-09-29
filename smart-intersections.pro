@@ -42,6 +42,7 @@ SOURCES += \
         ui/IntersectionWidget.cpp \
         ui/TimerWidget.cpp \
         ui/TimespanRegisterWidget.cpp \
+        ui/TimespanWindows.cpp \
         utils/reverse.cpp
 
 HEADERS += \
@@ -60,6 +61,7 @@ HEADERS += \
         ui/IntersectionWidget.h \
         ui/TimerWidget.h \
         ui/TimespanRegisterWidget.h \
+        ui/TimespanWindows.h \
         utils/reverse.h
 
 FORMS += \

@@ -1,0 +1,32 @@
+
+<intersection x="-23.5" y="-251" w="10240.5" h="263.5">
+    <roads>
+        <path id="0" x="0" y="0" color="#8b0000">
+            <line-to>
+                <point x="10000" y="0"/>
+            </line-to>
+        </path>
+    </roads>
+    <routes>
+        <route id="0">
+            <path-id>0</path-id>
+        </route>
+    </routes>
+    <cars>
+        <car id="1" v="0" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="2" v="0" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="3" v="0" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="4" v="0" d="0">
+            <route-id>0</route-id>
+        </car>
+        <car id="5" v="0" d="450">
+            <route-id>0</route-id>
+        </car>
+    </cars>
+</intersection>

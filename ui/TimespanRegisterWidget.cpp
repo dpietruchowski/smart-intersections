@@ -43,6 +43,18 @@ TimespanRegisterWidget::~TimespanRegisterWidget()
     delete ui;
 }
 
+void TimespanRegisterWidget::setCurrentArea(int id)
+{
+    int currIdx = 0;
+    for(auto& idx: idxMap_) {
+        if (idx.second == id) {
+            currIdx = idx.first;
+            break;
+        }
+    }
+    ui->stackedWidget->setCurrentIndex(currIdx);
+}
+
 void TimespanRegisterWidget::addCollisionArea(int id)
 {
     QWidget* page = new QWidget(ui->stackedWidget);

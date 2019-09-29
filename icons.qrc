@@ -28,5 +28,6 @@
         <file>icons/SceneEdit.svg</file>
         <file>icons/Scene.svg</file>
         <file>icons/Step.svg</file>
+        <file>icons/GoTo.svg</file>
     </qresource>
 </RCC>

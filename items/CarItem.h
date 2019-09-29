@@ -1,9 +1,12 @@
 #ifndef CARITEM_H
 #define CARITEM_H
 
+#include <list>
 #include <QGraphicsPolygonItem>
 #include "BaseItem.h"
 #include "Route.h"
+
+class CollisionAreaItem;
 
 class CarItem : public QGraphicsPolygonItem, public BaseItem
 {
@@ -17,6 +20,9 @@ public:
         Center,
         Back
     };
+
+    bool isInside() const;
+    void setInside(CollisionAreaItem* area, bool inside);
 
     void limitCarVelocity(qreal velocity);
     void setMaxVelocity(qreal velocity);
@@ -56,6 +62,7 @@ private:
     void saveItem(QXmlStreamWriter& xmlStream) const override;
 
 private:
+    std::list<CollisionAreaItem*> areas_;
     qreal desiredVelocity_ = 0;
     qreal maxVelocity_ = 100;
     qreal defaultDistance_ = 0;

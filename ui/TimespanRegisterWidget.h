@@ -22,6 +22,7 @@ public:
         CarId
     };
 
+    void setCurrentArea(int id);
     void addCollisionArea(int id);
     void addTime(int areaId, int carId, int time, int timespan);
     void removeTime(int areaId, int carId, int time, int timespan);

@@ -12,12 +12,26 @@
 
 IntersectionScene::IntersectionScene()
 {
+    connect(this, &IntersectionScene::focusItemChanged,
+            [this] (QGraphicsItem* newFocusItem, QGraphicsItem* oldFocusItem, Qt::FocusReason reason) {
+        CollisionAreaItem* newArea = dynamic_cast<CollisionAreaItem*>(newFocusItem);
+        if (newArea)
+            manager_.setCurrentArea(newArea);
+        else
+            manager_.setCurrentArea(nullptr);
+    });
 }
 
 void IntersectionScene::reset()
 {
     currentTime_ = 0;
-    for (auto* baseItem: getSortedItems<BaseItem>()) {
+    for (auto* baseItem: getSortedItems<CollisionAreaItem>()) {
+        baseItem->reset();
+    }
+    for (auto* baseItem: getSortedItems<PathItem>()) {
+        baseItem->reset();
+    }
+    for (auto* baseItem: getSortedItems<CarItem>()) {
         baseItem->reset();
     }
 
@@ -112,6 +126,7 @@ void IntersectionScene::deleteRoute(int id)
 bool IntersectionScene::load(QXmlStreamReader& xmlStream)
 {
     bool res = xmlStream.readNextStartElement();
+    if (!res) qWarning("%s", xmlStream.errorString().toStdString().c_str());
     if (!res || xmlStream.name() != "intersection")
         return false;
 

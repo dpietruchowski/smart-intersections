@@ -27,6 +27,29 @@ CarItem::CarItem(QGraphicsItem* parent): CarItem(-1, parent)
 
 }
 
+bool CarItem::isInside() const
+{
+    return areas_.size() > 0;
+}
+
+void CarItem::setInside(CollisionAreaItem* area, bool inside)
+{
+    if (inside) {
+        if (std::find(areas_.begin(), areas_.end(), area) == areas_.end()) {
+            areas_.push_back(area);
+        }
+    } else {
+        areas_.remove(area);
+    }
+
+    if (isInside()) {
+        setBrush(QColor(91, 129, 213, 155));
+    } else {
+        setBrush(QBrush());
+    }
+    update();
+}
+
 void CarItem::limitCarVelocity(qreal velocity)
 {
     if (velocity < maxVelocity_)

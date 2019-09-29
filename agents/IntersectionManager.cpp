@@ -29,6 +29,23 @@ void IntersectionManager::addCollisionArea(CollisionAreaItem* area)
     emit newCollisionArea(area->getId());
 }
 
+void IntersectionManager::setTimespan(CarAgent* agent, CollisionAreaItem* area, int time, int timespan)
+{
+    if (areas_.count(area) == 0) {
+        qWarning("This collision area doesn't exist in intersection");
+        return;
+    }
+
+    if (timespan > 100)
+        timespan = 100;
+    auto& timespansRegister = areas_[area];
+
+    if (agent != timespansRegister[time].agent)
+        qWarning("Agents not match");
+
+    timespansRegister[time].timespan = timespan;
+}
+
 void IntersectionManager::registerTime(size_t id, CarAgent* agent, CollisionAreaItem* area, int time, int timespan)
 {
     if (areas_.count(area) == 0) {
@@ -44,7 +61,7 @@ void IntersectionManager::registerTime(size_t id, CarAgent* agent, CollisionArea
     timespansRegister[availableTime].timespan = timespan;
     timespansRegister[availableTime].agent = agent;
 
-    agent->registerAt(id, availableTime, area);
+    agent->registerAt(id, availableTime, timespan, area);
     emit timeRegistered(area->getId(), agent->getCar()->getId(), availableTime, timespan);
 }
 
@@ -66,6 +83,14 @@ void IntersectionManager::unregisterTime(CarAgent* agent, CollisionAreaItem* are
     emit timeUnregistered(area->getId(), agent->getCar()->getId(), time, timespan);
 }
 
+IntersectionManager::TimespansRegister* IntersectionManager::getCurrentRegister()
+{
+    if (!currArea_ || areas_.count(currArea_) == 0)
+        return nullptr;
+
+    return &areas_.at(currArea_);
+}
+
 int IntersectionManager::getNextAvailableTime(TimespansRegister& timespansRegister, int time)
 {
     auto begin = timespansRegister.begin();
@@ -85,12 +110,18 @@ int IntersectionManager::getNextAvailableTime(IntersectionManager::TimespansRegi
 {
     auto begin = timespansRegister.begin();
     auto end = timespansRegister.end();
-    for (auto iter = begin; iter != end; ++iter) {
+    auto iter = timespansRegister.lower_bound(time);
+    if (iter != begin)
+        iter = std::prev(iter);
+    for (iter = begin; iter != end; ++iter) {
         int begin = iter->second.time;
         int end = begin + iter->second.timespan;
+        auto isBetween = [begin, end] (int time) { return time >= begin && time < end; };
         if (time + timespan <= begin)
             return time;
-        else if (time >= begin && time < end)
+        else if (isBetween(time) || isBetween(time + timespan))
+            time = end;
+        else if (time <= begin && time + timespan >= end)
             time = end;
     }
     return time;
