@@ -14,12 +14,10 @@ class BaseItem
 public:
     BaseItem(int id);
     BaseItem() = default;
-    virtual ~BaseItem() = default;
+    virtual ~BaseItem();;
 
     void reset();
-    void prestep();
-    void step();
-    void poststep();
+    void step(int currTime);
 
     bool load(QXmlStreamReader& xmlStream);
     void save(QXmlStreamWriter& xmlStream);
@@ -37,9 +35,7 @@ public:
 
 protected:
     virtual void onReset() {}
-    virtual void onStep() {}
-    virtual void onPreStep() {}
-    virtual void onPostStep() {}
+    virtual void onStep(int /*currTime*/) {}
 
 private:
     virtual const char* getItemName() = 0;

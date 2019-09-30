@@ -7,6 +7,7 @@
 #include "Route.h"
 
 class CollisionAreaItem;
+class CarAgent;
 
 class CarItem : public QGraphicsPolygonItem, public BaseItem
 {
@@ -14,12 +15,15 @@ class CarItem : public QGraphicsPolygonItem, public BaseItem
 public:
     explicit CarItem(int id, QGraphicsItem * parent = nullptr);
     explicit CarItem(QGraphicsItem * parent = nullptr);
+    ~CarItem() override;
 
     enum CarPart {
         Front,
         Center,
         Back
     };
+
+    void setAgent(CarAgent* agent);
 
     bool isInside() const;
     void setInside(CollisionAreaItem* area, bool inside);
@@ -52,7 +56,7 @@ protected:
     void setDistance(qreal distance);
 
 protected:
-    void onStep() override;
+    void onStep(int currTime) override;
     void onReset() override;
 
 private:
@@ -62,6 +66,7 @@ private:
     void saveItem(QXmlStreamWriter& xmlStream) const override;
 
 private:
+    CarAgent* agent_ = nullptr;
     std::list<CollisionAreaItem*> areas_;
     qreal desiredVelocity_ = 0;
     qreal maxVelocity_ = 100;

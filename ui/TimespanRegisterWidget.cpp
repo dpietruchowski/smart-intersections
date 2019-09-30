@@ -117,7 +117,7 @@ void TimespanRegisterWidget::removeTime(int areaId, int carId, int time, int tim
 
 void TimespanRegisterWidget::clear()
 {
-    for(int i = ui->stackedWidget->count(); i >= 0; i--)
+    for(int i = (ui->stackedWidget->count() - 1); i >= 0; i--)
     {
         QWidget* widget = ui->stackedWidget->widget(i);
         ui->stackedWidget->removeWidget(widget);

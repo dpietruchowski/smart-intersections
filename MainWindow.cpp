@@ -138,8 +138,7 @@ MainWindow::MainWindow(QWidget *parent) :
         auto* intersection = currentIntersectionWidget();
         if (intersection) {
             timer_->stop();
-            intersection->getScene().stop();
-            intersection->getScene().reset();
+            intersection->load();
         }
     });
     connect(ui->actionStep, &QAction::triggered, [this] {

@@ -35,8 +35,9 @@ public:
                QWidget *widget = nullptr) override;
 
 protected:
-    void onPreStep() override;
-    void onPostStep() override;
+    void onPreStep();
+    void onPostStep();
+    void onStep(int currTime) override;
     void onReset() override;
 
 private:

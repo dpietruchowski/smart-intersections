@@ -158,6 +158,9 @@
    <property name="text">
     <string>Step</string>
    </property>
+   <property name="shortcut">
+    <string>Right</string>
+   </property>
   </action>
   <action name="actionGoTo">
    <property name="icon">

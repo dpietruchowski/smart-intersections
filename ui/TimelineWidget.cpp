@@ -1,6 +1,7 @@
 #include "TimespanWindows.h"
 
 #include <QPainter>
+#include <QMouseEvent>
 
 #include "IntersectionManager.h"
 #include "CarAgent.h"
@@ -46,4 +47,23 @@ void TimespanWindows::paintEvent(QPaintEvent* event)
     if (currTime_ - beginTime > MAXTIME)
         beginTime = currTime_;
     painter.fillRect(x, 0, 2, h, QColor(0, 0, 0));
+}
+
+void TimespanWindows::mouseMoveEvent(QMouseEvent* event)
+{
+    int diff = event->pos().x() - xPressed_;
+    int w = width();
+    qreal j = (qreal)w / MAXTIME;
+    beginTime = j * diff;
+    update();
+}
+
+void TimespanWindows::mousePressEvent(QMouseEvent* event)
+{
+    xPressed_ = event->pos().x();
+}
+
+void TimespanWindows::mouseReleaseEvent(QMouseEvent* event)
+{
+    xPressed_ = 0;
 }

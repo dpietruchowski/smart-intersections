@@ -13,6 +13,7 @@ class CarAgent: public QObject
     Q_OBJECT
 public:
     CarAgent(CarItem* car);
+    ~CarAgent();
 
     struct TimespanAtCollisionArea {
         int time = 0;
@@ -20,6 +21,7 @@ public:
         CollisionPath path;
     };
 
+    void setCar(CarItem* car);
     CarItem* getCar() { return car_; }
     const CarItem* getCar() const { return car_; }
 

@@ -76,6 +76,9 @@ void PathItem::onReset()
 
 void PathItem::addCar(CarItem* car)
 {
+    if (std::find(cars_.begin(), cars_.end(), car) != cars_.end())
+        return;
+
     updateCar(car);
     cars_.push_back(car);
 
@@ -123,6 +126,10 @@ void PathItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 void PathItem::onPreStep()
 {
     IntersectionScene* intersection = getIntersection();
+    for (auto* car: cars_)
+         {
+        qDebug() << car->getId();
+    }
     // Limit to the next car
     for(auto iter = cars_.begin(); iter != cars_.end(); ++iter) {
         auto next = std::next(iter);
@@ -135,7 +142,13 @@ void PathItem::onPreStep()
         }
         (*iter)->setMaxVelocity(vMax);
     }
+}
 
+void PathItem::onStep(int currTime)
+{
+    onPreStep();
+
+    IntersectionScene* intersection = getIntersection();
     // Limit to the next collision area
     for(auto iter = cars_.begin(); iter != cars_.end(); ++iter) {
         auto* car = *iter;
@@ -148,7 +161,7 @@ void PathItem::onPreStep()
                 car->limitCarVelocity(vMax);
             }
         }
-        car->step();
+        car->step(currTime);
 
         for (auto cPath: collisionPaths_) {
             bool isInsideArea = cPath.isPartInside(car->getDistance(CarItem::Back),
@@ -157,17 +170,10 @@ void PathItem::onPreStep()
                 cPath.getArea()->setOccupied(car, true);
             else
                 cPath.getArea()->setOccupied(car, false);
-            /*
-            bool willBeInside = cPath.isPartInside(car->getNextBackDistance(),
-                                                   car->getNextFrontDistance());
-
-            if (isInside && !willBeInside) {
-                cPath.getArea()->setOccupied(false);
-            } else if (!isInside && willBeInside) {
-                cPath.getArea()->setOccupied(true);
-            }*/
         }
     }
+
+    onPostStep();
 }
 
 void PathItem::onPostStep()

@@ -2,6 +2,7 @@
 
 #include "IntersectionScene.h"
 #include "PathItem.h"
+#include "CarAgent.h"
 
 #include <QDebug>
 #include <QPainter>
@@ -25,6 +26,17 @@ CarItem::CarItem(int id, QGraphicsItem* parent): QGraphicsPolygonItem(parent), B
 CarItem::CarItem(QGraphicsItem* parent): CarItem(-1, parent)
 {
 
+}
+
+CarItem::~CarItem()
+{
+    if (agent_)
+        agent_->setCar(nullptr);
+}
+
+void CarItem::setAgent(CarAgent* agent)
+{
+    agent_ = agent;
 }
 
 bool CarItem::isInside() const
@@ -179,8 +191,10 @@ qreal CarItem::getDistance(qreal distance, CarItem::CarPart part) const
     return distance;
 }
 
-void CarItem::onStep()
+void CarItem::onStep(int currTime)
 {
+    if (agent_)
+        agent_->step(currTime);
     distance_ = getNextDistance();
 }
 

@@ -16,11 +16,15 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
     IntersectionManager* manager_ = nullptr;
     int currTime_ = 0;
     int beginTime = 0;
+    int xPressed_ = 0;
 };
 
 #endif // TIMESPANWINDOWS_H

@@ -24,6 +24,7 @@ IntersectionScene::IntersectionScene()
 
 void IntersectionScene::reset()
 {
+    qDebug() << "reset";
     currentTime_ = 0;
     for (auto* baseItem: getSortedItems<CollisionAreaItem>()) {
         baseItem->reset();
@@ -67,6 +68,7 @@ void IntersectionScene::reset()
 
 void IntersectionScene::start(int msec)
 {
+    qDebug() << "start";
     timer_.start(msec, this);
 }
 
@@ -131,6 +133,7 @@ bool IntersectionScene::load(QXmlStreamReader& xmlStream)
         return false;
 
     clear();
+    qDebug() << "II" << items().size();
     attributes_ = NoAttribute;
     routes_.clear();
 
@@ -244,23 +247,12 @@ void IntersectionScene::timerEvent(QTimerEvent* event)
 
 void IntersectionScene::step()
 {
+    qDebug() << "step";
+    auto paths = getItems<PathItem>();
+    for (auto* path: getItems<PathItem>()) {
+        path->step(currentTime_);
+    }
     onStep();
-    for (auto* car: getItems<BaseItem>()) {
-        car->prestep();
-    }
-    for (auto* car: getItems<BaseItem>()) {
-        //car->step();
-    }
-    std::sort(agents_.begin(), agents_.end(),
-              [] (auto& a1, auto& a2) {
-        return a1->getCar()->getRouteDistance() > a2->getCar()->getRouteDistance();
-    });
-    for(auto& agent: agents_) {
-        agent->step(currentTime_);
-    }
-    for (auto* car: getItems<BaseItem>()) {
-        car->poststep();
-    }
     emit stepped(currentTime_);
 }
 

@@ -72,9 +72,7 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
     });
 
     connect(ui->actionLoadScene, &QAction::triggered, [this] {
-        QXmlStreamReader r(ui->textEdit->toPlainText());
-        scene_.load(r);
-        scene_.reset();
+        load();
     });
     ui->toolButton->setDefaultAction(ui->actionLoadScene);
 
@@ -105,7 +103,6 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
             ui->registerWidget, &TimespanRegisterWidget::clear);
 
     ui->frame->setManager(&scene_.getManager());
-
 
     open(":/default.xml");
     setWindowTitle(name);
@@ -209,6 +206,14 @@ void IntersectionWidget::save()
     fileraw.open(QIODevice::WriteOnly);
     fileraw.write(ui->textEdit->toPlainText().toUtf8());
     fileraw.close();
+}
+
+void IntersectionWidget::load()
+{
+    scene_.stop();
+    QXmlStreamReader r(ui->textEdit->toPlainText());
+    scene_.load(r);
+    scene_.reset();
 }
 
 bool IntersectionWidget::isSaved() const

@@ -4,10 +4,15 @@
 #include <QPen>
 #include <QBrush>
 #include <IntersectionScene.h>
+#include <QDebug>
 
 BaseItem::BaseItem(int id): id_(id)
 {
 
+}
+
+BaseItem::~BaseItem() {
+    qDebug() << "destructor" << id_;
 }
 
 void BaseItem::reset()
@@ -15,19 +20,9 @@ void BaseItem::reset()
     onReset();
 }
 
-void BaseItem::prestep()
+void BaseItem::step(int currTime)
 {
-    onPreStep();
-}
-
-void BaseItem::step()
-{
-    onStep();
-}
-
-void BaseItem::poststep()
-{
-    onPostStep();
+    onStep(currTime);
 }
 
 bool BaseItem::load(QXmlStreamReader& xmlStream)

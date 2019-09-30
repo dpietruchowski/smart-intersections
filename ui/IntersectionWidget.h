@@ -33,6 +33,7 @@ public:
     bool open(const QString& filename);
     void save(const QString& filename);
     void save();
+    void load();
     bool isSaved() const;
     bool fileExists() const;
 
