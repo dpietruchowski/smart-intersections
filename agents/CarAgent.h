@@ -25,7 +25,7 @@ public:
     CarItem* getCar() { return car_; }
     const CarItem* getCar() const { return car_; }
 
-    void step(int currTime);
+    virtual void step(int currTime) = 0;
 
     void findCollisionPaths();
 
@@ -35,15 +35,13 @@ signals:
     void registerMeAt(size_t id, int time, int timespan, CollisionAreaItem* area);
     void unregisterMeAt(size_t id, int oldtime, int newtime, int timespan, CollisionAreaItem* area);
 
-private:
-    void registerFor(size_t id, TimespanAtCollisionArea& taca, int currTime);
+protected:
     qreal countDiffDistance(TimespanAtCollisionArea& taca);
     qreal countAreaLength(TimespanAtCollisionArea& taca);
 
-private:
+protected:
     CarItem* car_ = nullptr;
     qreal defaultVelocity_ = 0;
-    qreal vMax_ = 1000;
     std::vector<TimespanAtCollisionArea> timespansRegister;
 };
 

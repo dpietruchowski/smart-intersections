@@ -8,6 +8,8 @@
 #include "PathItem.h"
 #include "CarItem.h"
 #include "CollisionAreaItem.h"
+
+#include "CarAgent1.h"
 #include <QDebug>
 
 IntersectionScene::IntersectionScene()
@@ -48,7 +50,7 @@ void IntersectionScene::reset()
         return a->getDistance() > b->getDistance();
     });
     for (auto* car: cars) {
-        auto& agent = agents_.emplace_back(std::make_unique<CarAgent>(car));
+        auto& agent = agents_.emplace_back(std::make_unique<CarAgent1>(car));
         agent->findCollisionPaths();
     }
 

@@ -1,4 +1,4 @@
-#include "TimespanWindows.h"
+#include "TimelineWidget.h"
 
 #include <QPainter>
 #include <QMouseEvent>
@@ -7,19 +7,19 @@
 #include "CarAgent.h"
 #include "CarItem.h"
 
-void TimespanWindows::setManager(IntersectionManager* manager)
+void TimelineWidget::setManager(IntersectionManager* manager)
 {
     manager_ = manager;
 }
 
-void TimespanWindows::setCurrentTime(int time)
+void TimelineWidget::setCurrentTime(int time)
 {
     currTime_ = time;
     if (currTime_ < beginTime)
         beginTime = currTime_;
 }
 
-void TimespanWindows::paintEvent(QPaintEvent* event)
+void TimelineWidget::paintEvent(QPaintEvent* event)
 {
     QFrame::paintEvent(event);
 
@@ -49,7 +49,7 @@ void TimespanWindows::paintEvent(QPaintEvent* event)
     painter.fillRect(x, 0, 2, h, QColor(0, 0, 0));
 }
 
-void TimespanWindows::mouseMoveEvent(QMouseEvent* event)
+void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
 {
     int diff = event->pos().x() - xPressed_;
     int w = width();
@@ -58,12 +58,12 @@ void TimespanWindows::mouseMoveEvent(QMouseEvent* event)
     update();
 }
 
-void TimespanWindows::mousePressEvent(QMouseEvent* event)
+void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
     xPressed_ = event->pos().x();
 }
 
-void TimespanWindows::mouseReleaseEvent(QMouseEvent* event)
+void TimelineWidget::mouseReleaseEvent(QMouseEvent* event)
 {
     xPressed_ = 0;
 }

@@ -27,6 +27,8 @@ QMAKE_CXXFLAGS += -std=c++17
 
 SOURCES += \
         agents/CarAgent.cpp \
+        agents/CarAgent1.cpp \
+        agents/CarAgent2.cpp \
         agents/IntersectionManager.cpp \
         items/CollisionAreaItem.cpp \
         main.cpp \
@@ -40,14 +42,16 @@ SOURCES += \
         scene/Route.cpp \
         ui/CarTable.cpp \
         ui/IntersectionWidget.cpp \
+        ui/TimelineWidget.cpp \
         ui/TimerWidget.cpp \
         ui/TimespanRegisterWidget.cpp \
-        ui/TimespanWindows.cpp \
         utils/reverse.cpp
 
 HEADERS += \
         MainWindow.h \
         agents/CarAgent.h \
+        agents/CarAgent1.h \
+        agents/CarAgent2.h \
         agents/IntersectionManager.h \
         items/BaseItem.h \
         items/CarItem.h \
@@ -59,9 +63,9 @@ HEADERS += \
         scene/Route.h \
         ui/CarTable.h \
         ui/IntersectionWidget.h \
+        ui/TimelineWidget.h \
         ui/TimerWidget.h \
         ui/TimespanRegisterWidget.h \
-        ui/TimespanWindows.h \
         utils/reverse.h
 
 FORMS += \

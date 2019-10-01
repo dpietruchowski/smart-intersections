@@ -1,11 +1,11 @@
-#ifndef TIMESPANWINDOWS_H
-#define TIMESPANWINDOWS_H
+#ifndef TimelineWidget_H
+#define TimelineWidget_H
 
 #include <QFrame>
 
 class IntersectionManager;
 
-class TimespanWindows: public QFrame
+class TimelineWidget: public QFrame
 {
 public:
     static const int MAXTIME = 500;
@@ -27,4 +27,4 @@ private:
     int xPressed_ = 0;
 };
 
-#endif // TIMESPANWINDOWS_H
+#endif // TimelineWidget_H
