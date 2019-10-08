@@ -9,25 +9,28 @@
 #include "CarItem.h"
 #include "CollisionAreaItem.h"
 
-#include "CarAgent1.h"
+#include "IntersectionTimeManager.h"
+#include "IntersectionQueueManager.h"
+#include "CarTimeAgent1.h"
+#include "CarQueueAgent.h"
 #include <QDebug>
 
 #include "Stat.h"
 #include "CarVelocityStat.h"
 #include "CarDistanceStat.h"
 
-IntersectionScene::IntersectionScene()
+IntersectionScene::IntersectionScene(): manager_(std::make_unique<IntersectionTimeManager>())
 {
     connect(this, &IntersectionScene::focusItemChanged,
             [this] (QGraphicsItem* newFocusItem, QGraphicsItem* oldFocusItem, Qt::FocusReason reason) {
         CollisionAreaItem* newArea = dynamic_cast<CollisionAreaItem*>(newFocusItem);
         if (newArea)
-            manager_.setCurrentArea(newArea);
+            manager_->setCurrentArea(newArea);
         else
-            manager_.setCurrentArea(nullptr);
+            manager_->setCurrentArea(nullptr);
     });
+
     stats_.push_back(std::make_unique<CarVelocityStat>());
-    stats_.push_back(std::make_unique<CarDistanceStat>());
 }
 
 void IntersectionScene::reset()
@@ -45,14 +48,14 @@ void IntersectionScene::reset()
     }
 
     agents_.clear();
-    manager_.clear();
+    manager_->clear();
 
     for(auto& stat: stats_) {
         stat->clear();
     }
 
     for (auto* area: getItems<CollisionAreaItem>()) {
-        manager_.addCollisionArea(area);
+        manager_->addCollisionArea(area);
     }
 
     auto cars = getItems<CarItem>();
@@ -60,21 +63,12 @@ void IntersectionScene::reset()
         return a->getDistance() > b->getDistance();
     });
     for (auto* car: cars) {
-        auto& agent = agents_.emplace_back(std::make_unique<CarAgent1>(car));
+        auto& agent = agents_.emplace_back(std::make_unique<CarTimeAgent1>(car));
         agent->findCollisionPaths();
     }
 
     for (auto& agent: agents_) {
-        CarAgent* carAgent = agent.get();
-        connect(carAgent, &CarAgent::registerMeAt,
-                [this, carAgent] (size_t id, int time, int timespan, CollisionAreaItem* area) {
-            manager_.registerTime(id, carAgent, area, time, timespan);
-        });
-        connect(carAgent, &CarAgent::unregisterMeAt,
-                [this, carAgent] (size_t id, int oldTime, int time, int timespan, CollisionAreaItem* area) {
-            manager_.unregisterTime(carAgent, area, oldTime);
-            manager_.registerTime(id, carAgent, area, time, timespan);
-        });
+        manager_->connectCarAgent(agent.get());
     }
 }
 
@@ -268,6 +262,7 @@ void IntersectionScene::step()
             item->accept(*stat, currentTime_);
         }
     }
+    manager_->step(currentTime_);
     ++currentTime_;
     emit stepped(currentTime_);
 }

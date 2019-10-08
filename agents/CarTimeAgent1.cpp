@@ -1,11 +1,11 @@
-#include "CarAgent1.h"
+#include "CarTimeAgent1.h"
 
 #include <cmath>
 
 #include "CarItem.h"
 #include "reverse.h"
 
-void CarAgent1::step(int currTime)
+void CarTimeAgent1::step(int currTime)
 {
     vMax_ = defaultVelocity_;
     size_t idx = timespansRegister.size() - 1;
@@ -62,7 +62,7 @@ void CarAgent1::step(int currTime)
     car_->setDesiredVelocity(desiredVelocity);
 }
 
-void CarAgent1::registerFor(size_t id, CarAgent::TimespanAtCollisionArea& currentTimespan, int currTime)
+void CarTimeAgent1::registerFor(size_t id, CarTimeAgent::TimespanAtCollisionArea& currentTimespan, int currTime)
 {
     vMax_ = std::min(vMax_, car_->getMaxVelocity());
     qreal diffDistance = countDiffDistance(currentTimespan);

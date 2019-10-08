@@ -3,14 +3,12 @@
 
 #include <vector>
 #include <QObject>
-
 #include "CollisionPath.h"
 
 class CarItem;
 
 class CarAgent: public QObject
 {
-    Q_OBJECT
 public:
     CarAgent(CarItem* car);
     ~CarAgent();
@@ -29,11 +27,6 @@ public:
 
     void findCollisionPaths();
 
-    void registerAt(size_t id, int time, int timespan, CollisionAreaItem *area);
-
-signals:
-    void registerMeAt(size_t id, int time, int timespan, CollisionAreaItem* area);
-    void unregisterMeAt(size_t id, int oldtime, int newtime, int timespan, CollisionAreaItem* area);
 
 protected:
     qreal countDiffDistance(TimespanAtCollisionArea& taca);

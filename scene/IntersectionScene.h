@@ -38,7 +38,7 @@ public:
 
     IntersectionScene();
 
-    IntersectionManager& getManager() { return manager_; }
+    IntersectionManager* getManager() { return manager_.get(); }
     Agents& getAgents() { return agents_; }
     Stats& getStats() { return stats_; }
 
@@ -101,7 +101,7 @@ private:
     int currentTime_ = 0;
     std::map<int, Route> routes_;
 
-    IntersectionManager manager_;
+    std::unique_ptr<IntersectionManager> manager_;
     Agents agents_;
     mutable int nextId_ = 0;
 

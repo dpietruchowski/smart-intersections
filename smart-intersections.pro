@@ -27,9 +27,13 @@ QMAKE_CXXFLAGS += -std=c++17
 
 SOURCES += \
         agents/CarAgent.cpp \
-        agents/CarAgent1.cpp \
-        agents/CarAgent2.cpp \
+        agents/CarQueueAgent.cpp \
+        agents/CarTimeAgent.cpp \
+        agents/CarTimeAgent1.cpp \
+        agents/CarTimeAgent2.cpp \
         agents/IntersectionManager.cpp \
+        agents/IntersectionQueueManager.cpp \
+        agents/IntersectionTimeManager.cpp \
         items/CollisionAreaItem.cpp \
         main.cpp \
         MainWindow.cpp \
@@ -57,9 +61,13 @@ SOURCES += \
 HEADERS += \
         MainWindow.h \
         agents/CarAgent.h \
-        agents/CarAgent1.h \
-        agents/CarAgent2.h \
+        agents/CarQueueAgent.h \
+        agents/CarTimeAgent.h \
+        agents/CarTimeAgent1.h \
+        agents/CarTimeAgent2.h \
         agents/IntersectionManager.h \
+        agents/IntersectionQueueManager.h \
+        agents/IntersectionTimeManager.h \
         items/BaseItem.h \
         items/CarItem.h \
         items/CollisionAreaItem.h \

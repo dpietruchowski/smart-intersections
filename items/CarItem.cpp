@@ -2,7 +2,7 @@
 
 #include "IntersectionScene.h"
 #include "PathItem.h"
-#include "CarAgent.h"
+#include "CarTimeAgent.h"
 
 #include <QDebug>
 #include <QPainter>

@@ -99,6 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
         openIntersection();
     });
 
+
     ViewActionGroup *viewActionGroup = new ViewActionGroup(this);
 
     viewActionGroup->setAction(IntersectionWidget::View::Edit, ui->actionEditView);

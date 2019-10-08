@@ -10,6 +10,8 @@
 #include "MainWindow.h"
 #include "CollisionAreaItem.h"
 
+#include "IntersectionTimeManager.h"
+
 #include <QGraphicsItem>
 
 class TextEditView: public QObject
@@ -93,16 +95,19 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
             ui->registerWidget->setCurrentArea(newArea->getId());
     });
 
-    connect(&scene_.getManager(), &IntersectionManager::newCollisionArea,
-            ui->registerWidget, &TimespanRegisterWidget::addCollisionArea);
-    connect(&scene_.getManager(), &IntersectionManager::timeRegistered,
-            ui->registerWidget, &TimespanRegisterWidget::addTime);
-    connect(&scene_.getManager(), &IntersectionManager::timeUnregistered,
-            ui->registerWidget, &TimespanRegisterWidget::removeTime);
-    connect(&scene_.getManager(), &IntersectionManager::cleared,
-            ui->registerWidget, &TimespanRegisterWidget::clear);
+    IntersectionTimeManager* timeManager = dynamic_cast<IntersectionTimeManager*>(scene_.getManager());
+    if (timeManager) {
+        connect(timeManager, &IntersectionTimeManager::newCollisionArea,
+                ui->registerWidget, &TimespanRegisterWidget::addCollisionArea);
+        connect(timeManager, &IntersectionTimeManager::timeRegistered,
+                ui->registerWidget, &TimespanRegisterWidget::addTime);
+        connect(timeManager, &IntersectionTimeManager::timeUnregistered,
+                ui->registerWidget, &TimespanRegisterWidget::removeTime);
+        connect(timeManager, &IntersectionTimeManager::cleared,
+                ui->registerWidget, &TimespanRegisterWidget::clear);
+    }
 
-    ui->frame->setManager(&scene_.getManager());
+    ui->frame->setManager(scene_.getManager());
 
     open(":/default.xml");
     setWindowTitle(name);

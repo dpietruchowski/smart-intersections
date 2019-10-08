@@ -4,6 +4,8 @@
 #include <QFrame>
 
 class IntersectionManager;
+class IntersectionTimeManager;
+class IntersectionQueueManager;
 
 class TimelineWidget: public QFrame
 {
@@ -19,6 +21,10 @@ protected:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+
+private:
+    void paint(IntersectionTimeManager* manager, QPainter& painter);
+    void paint(IntersectionQueueManager* manager, QPainter& painter);
 
 private:
     IntersectionManager* manager_ = nullptr;
