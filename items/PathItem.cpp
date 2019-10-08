@@ -1,4 +1,4 @@
-#include "PathItem.h"
+﻿#include "PathItem.h"
 
 #include "CarItem.h"
 
@@ -111,6 +111,11 @@ void PathItem::setPath(const PainterPath& path)
     QGraphicsPathItem::setPath(path);
 }
 
+void PathItem::accept(Stat& Stat, int currentTime)
+{
+    Stat.visit(*this, currentTime);
+}
+
 void PathItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     QGraphicsPathItem::paint(painter, option, widget);
@@ -126,10 +131,6 @@ void PathItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 void PathItem::onPreStep()
 {
     IntersectionScene* intersection = getIntersection();
-    for (auto* car: cars_)
-         {
-        qDebug() << car->getId();
-    }
     // Limit to the next car
     for(auto iter = cars_.begin(); iter != cars_.end(); ++iter) {
         auto next = std::next(iter);
@@ -150,9 +151,8 @@ void PathItem::onStep(int currTime)
 
     IntersectionScene* intersection = getIntersection();
     // Limit to the next collision area
-    for(auto iter = cars_.begin(); iter != cars_.end(); ++iter) {
+    for(auto iter = cars_.rbegin(); iter != cars_.rend(); ++iter) {
         auto* car = *iter;
-
         auto collisionPath = getNextCollisionPath(car->getDistance(CarItem::Front));
         if (collisionPath.isValid()) {
             if (collisionPath.getArea()->isOccupied()

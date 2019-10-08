@@ -7,6 +7,8 @@
 #include <QPen>
 #include <QBrush>
 
+#include "Stat.h"
+
 class IntersectionScene;
 
 class BaseItem
@@ -32,6 +34,7 @@ public:
 
     IntersectionScene* getIntersection();
 
+    virtual void accept(Stat& Stat, int currentTime) {}
 
 protected:
     virtual void onReset() {}

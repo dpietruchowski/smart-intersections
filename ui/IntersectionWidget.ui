@@ -120,7 +120,7 @@
     </widget>
    </item>
    <item>
-    <widget class="TimespanWindows" name="frame">
+    <widget class="TimelineWidget" name="frame">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -156,9 +156,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TimespanWindows</class>
+   <class>TimelineWidget</class>
    <extends>QFrame</extends>
-   <header>TimespanWindows.h</header>
+   <header>TimelineWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

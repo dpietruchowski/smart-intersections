@@ -62,6 +62,15 @@ void CarItem::setInside(CollisionAreaItem* area, bool inside)
     update();
 }
 
+qreal CarItem::getVelocity() const
+{
+    qreal velocity = desiredVelocity_;
+    if (maxVelocity_ < desiredVelocity_)
+        velocity = maxVelocity_;
+
+    return velocity;
+}
+
 void CarItem::limitCarVelocity(qreal velocity)
 {
     if (velocity < maxVelocity_)
@@ -105,10 +114,7 @@ qreal CarItem::getRouteDistance(CarItem::CarPart part) const
 
 qreal CarItem::getNextDistance(CarItem::CarPart part) const
 {
-    qreal velocity = desiredVelocity_;
-    if (maxVelocity_ < desiredVelocity_)
-        velocity = maxVelocity_;
-
+    qreal velocity = getVelocity();
     return getDistance(distance_ + velocity, part);
 }
 
@@ -164,6 +170,11 @@ void CarItem::moveToNextPath()
 {
     routeDistance_ += getDistance();
     moveToRouteDistance(routeDistance_);
+}
+
+void CarItem::accept(Stat& Stat, int currentTime)
+{
+    Stat.visit(*this, currentTime);
 }
 
 void CarItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)

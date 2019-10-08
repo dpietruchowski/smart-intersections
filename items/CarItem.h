@@ -8,6 +8,7 @@
 
 class CollisionAreaItem;
 class CarAgent;
+class Stat;
 
 class CarItem : public QGraphicsPolygonItem, public BaseItem
 {
@@ -28,6 +29,8 @@ public:
     bool isInside() const;
     void setInside(CollisionAreaItem* area, bool inside);
 
+    qreal getVelocity() const;
+
     void limitCarVelocity(qreal velocity);
     void setMaxVelocity(qreal velocity);
     qreal getMaxVelocity() const;
@@ -47,6 +50,8 @@ public:
     PathItem* getNextPath();
     void moveToRouteDistance(qreal routeDistance);
     void moveToNextPath();
+
+    void accept(Stat& Stat, int currentTime) override;
 
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,

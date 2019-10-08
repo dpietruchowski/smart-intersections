@@ -11,6 +11,7 @@
 #include "Route.h"
 #include "CarAgent.h"
 #include "IntersectionManager.h"
+#include "Stat.h"
 
 class PainterPath;
 class PathItem;
@@ -32,16 +33,20 @@ public:
         CarPathQueue = 0x0001,
         CollisionAreaBlock = 0x0002
     };
+    using Agents = std::vector<std::unique_ptr<CarAgent>>;
+    using Stats = std::vector<std::unique_ptr<Stat>>;
 
     IntersectionScene();
 
     IntersectionManager& getManager() { return manager_; }
-    std::vector<std::unique_ptr<CarAgent>>& getAgents() { return agents_; }
+    Agents& getAgents() { return agents_; }
+    Stats& getStats() { return stats_; }
 
     void reset();
     void start(int msec = 10);
     void stop();
     void step();
+    void refresh();
     int getCurrentTime() const { return currentTime_; }
 
     PathItem* addCarPath(const PainterPath &path,
@@ -86,7 +91,6 @@ signals:
 protected:
     void timerEvent(QTimerEvent *event) override;
     void drawBackground(QPainter *painter, const QRectF &rect) override;
-    void onStep();
 
 private:
     BaseItem* createItem(Item item) const;
@@ -98,8 +102,10 @@ private:
     std::map<int, Route> routes_;
 
     IntersectionManager manager_;
-    std::vector<std::unique_ptr<CarAgent>> agents_;
+    Agents agents_;
     mutable int nextId_ = 0;
+
+    Stats stats_;
 
     unsigned int attributes_ = NoAttribute;
 };

@@ -54,6 +54,7 @@
    <addaction name="actionSceneView"/>
    <addaction name="actionSceneEditView"/>
    <addaction name="separator"/>
+   <addaction name="actionStats"/>
    <addaction name="actionStart"/>
    <addaction name="actionPause"/>
    <addaction name="actionStop"/>
@@ -169,6 +170,18 @@
    </property>
    <property name="text">
     <string>GoTo</string>
+   </property>
+  </action>
+  <action name="actionStats">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/toolbutton/icons/Stats.svg</normaloff>:/toolbutton/icons/Stats.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Stats</string>
    </property>
   </action>
  </widget>

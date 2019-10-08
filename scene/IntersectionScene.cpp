@@ -12,6 +12,10 @@
 #include "CarAgent1.h"
 #include <QDebug>
 
+#include "Stat.h"
+#include "CarVelocityStat.h"
+#include "CarDistanceStat.h"
+
 IntersectionScene::IntersectionScene()
 {
     connect(this, &IntersectionScene::focusItemChanged,
@@ -22,6 +26,8 @@ IntersectionScene::IntersectionScene()
         else
             manager_.setCurrentArea(nullptr);
     });
+    stats_.push_back(std::make_unique<CarVelocityStat>());
+    stats_.push_back(std::make_unique<CarDistanceStat>());
 }
 
 void IntersectionScene::reset()
@@ -40,6 +46,10 @@ void IntersectionScene::reset()
 
     agents_.clear();
     manager_.clear();
+
+    for(auto& stat: stats_) {
+        stat->clear();
+    }
 
     for (auto* area: getItems<CollisionAreaItem>()) {
         manager_.addCollisionArea(area);
@@ -70,7 +80,6 @@ void IntersectionScene::reset()
 
 void IntersectionScene::start(int msec)
 {
-    qDebug() << "start";
     timer_.start(msec, this);
 }
 
@@ -254,18 +263,25 @@ void IntersectionScene::step()
     for (auto* path: getItems<PathItem>()) {
         path->step(currentTime_);
     }
-    onStep();
+    for (auto* item: getItems<BaseItem>()) {
+        for(auto& stat: stats_) {
+            item->accept(*stat, currentTime_);
+        }
+    }
+    ++currentTime_;
     emit stepped(currentTime_);
+}
+
+void IntersectionScene::refresh()
+{
+    for (auto& stat: stats_) {
+        stat->refresh();
+    }
 }
 
 int IntersectionScene::getNextId() const
 {
     return nextId_++;
-}
-
-void IntersectionScene::onStep()
-{
-    ++currentTime_;
 }
 
 BaseItem* IntersectionScene::createItem(IntersectionScene::Item item) const

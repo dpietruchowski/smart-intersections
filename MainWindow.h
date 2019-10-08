@@ -10,6 +10,7 @@ class MainWindow;
 }
 
 class TimerWidget;
+class StatsDialog;
 class IntersectionWidget;
 
 class MainWindow : public QMainWindow
@@ -40,6 +41,7 @@ private:
     Ui::MainWindow *ui;
     int nIntersections_ = 0;
     TimerWidget* timer_ = nullptr;
+    StatsDialog* statsDialog_ = nullptr;
 };
 
 #endif // MAINWINDOW_H

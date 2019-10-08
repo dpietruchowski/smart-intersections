@@ -12,6 +12,7 @@
 #include <QActionGroup>
 
 #include "scene/IntersectionScene.h"
+#include "StatsDialog.h"
 
 #include "ui/IntersectionWidget.h"
 #include "ui/TimerWidget.h"
@@ -79,6 +80,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->toolBar->addWidget(spinBox);
     timer_ = new TimerWidget(this);
     ui->toolBar->addWidget(timer_);
+
+    statsDialog_ = new StatsDialog(this);
+    statsDialog_->hide();
 
     connect(ui->actionNewIntersection, &QAction::triggered,
             [this] {
@@ -160,6 +164,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, [this] (QMdiSubWindow* window) {
         if (window)
             onCurrentIntersectionChanged(static_cast<IntersectionWidget*>(window->widget()));
+    });
+
+    connect(ui->actionStats, &QAction::triggered, [this] (bool checked) {
+        if (checked)
+            statsDialog_->show();
+        else
+            statsDialog_->hide();
     });
 }
 
@@ -251,6 +262,10 @@ void MainWindow::onCurrentIntersectionChanged(IntersectionWidget* currentInterse
     if (prevIntersection)
         prevIntersection->getScene().removeEventFilter(this);
 
-    if (currentIntersection)
+    if (currentIntersection) {
         currentIntersection->getScene().installEventFilter(this);
+        statsDialog_->setCurrentIntersection(currentIntersection);
+    } else {
+        statsDialog_->setCurrentIntersection(nullptr);
+    }
 }

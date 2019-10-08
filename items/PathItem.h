@@ -14,7 +14,7 @@ class CollisionAreaItem;
 
 class PathItem: public QGraphicsPathItem, public BaseItem
 {
-    inline static const qreal MAXIMUM_VELOCITY = 15;
+    inline static const qreal MAXIMUM_VELOCITY = 60;
 public:
     explicit PathItem(int id, QGraphicsItem * parent = nullptr);
     explicit PathItem(QGraphicsItem * parent = nullptr);
@@ -29,6 +29,8 @@ public:
 
     PainterPath path() const;
     void setPath(const PainterPath &path);
+
+    void accept(Stat &Stat, int currentTime) override;
 
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,

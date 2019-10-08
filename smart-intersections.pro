@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -40,11 +40,18 @@ SOURCES += \
         scene/IntersectionScene.cpp \
         scene/PainterPath.cpp \
         scene/Route.cpp \
+        stats/ByStepStat.cpp \
+        stats/CarDistanceStat.cpp \
+        stats/CarVelocityStat.cpp \
+        stats/StandardModel.cpp \
+        stats/Stat.cpp \
         ui/CarTable.cpp \
         ui/IntersectionWidget.cpp \
+        ui/StatsDialog.cpp \
         ui/TimelineWidget.cpp \
         ui/TimerWidget.cpp \
         ui/TimespanRegisterWidget.cpp \
+        utils/executionTime.cpp \
         utils/reverse.cpp
 
 HEADERS += \
@@ -61,16 +68,24 @@ HEADERS += \
         scene/IntersectionScene.h \
         scene/PainterPath.h \
         scene/Route.h \
+        stats/ByStepStat.h \
+        stats/CarDistanceStat.h \
+        stats/CarVelocityStat.h \
+        stats/StandardModel.h \
+        stats/Stat.h \
         ui/CarTable.h \
         ui/IntersectionWidget.h \
+        ui/StatsDialog.h \
         ui/TimelineWidget.h \
         ui/TimerWidget.h \
         ui/TimespanRegisterWidget.h \
+        utils/executionTime.h \
         utils/reverse.h
 
 FORMS += \
         MainWindow.ui \
         ui/IntersectionWidget.ui \
+        ui/StatsWidget.ui \
         ui/TimerWidget.ui \
         ui/TimespanRegisterWidget.ui
 
@@ -79,6 +94,7 @@ INCLUDEPATH += \
         items \
         agents \
         ui \
+        stats \
         utils
 
 RESOURCES += \
