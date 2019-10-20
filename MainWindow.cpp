@@ -157,6 +157,18 @@ MainWindow::MainWindow(QWidget *parent) :
             }
         }
     });
+    connect(ui->actionStats, &QAction::triggered, [this] {
+        QString filename = QFileDialog::getSaveFileName(this,
+          "Save stats", {});
+
+        if (filename.isEmpty())
+            return;
+
+        auto* intersection = currentIntersectionWidget();
+        if (intersection) {
+            intersection->getScene().saveStats(filename.toStdString().c_str());
+        }
+    });
 
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, [this] (QMdiSubWindow* window) {
         if (window)

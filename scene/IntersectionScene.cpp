@@ -267,6 +267,17 @@ void IntersectionScene::step()
     emit stepped(currentTime_);
 }
 
+void IntersectionScene::saveStats(const char* filename)
+{
+    QString _filename = "%1(%2)";
+    _filename = _filename.arg(filename);
+    int i = 0;
+    for(auto& stat: stats_) {
+        stat->save(_filename.arg(i).toStdString().c_str());
+        ++i;
+    }
+}
+
 int IntersectionScene::getNextId() const
 {
     return nextId_++;

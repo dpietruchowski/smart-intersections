@@ -13,7 +13,7 @@ public:
     Stat() = default;
     virtual ~Stat() = default;
 
-    void save() const;
+    void save(const char* filename) const;
     void clear()
 ;
     virtual void visit(const CarItem&, int /*currentTime*/) {}
