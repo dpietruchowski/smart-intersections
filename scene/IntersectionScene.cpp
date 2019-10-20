@@ -267,13 +267,6 @@ void IntersectionScene::step()
     emit stepped(currentTime_);
 }
 
-void IntersectionScene::refresh()
-{
-    for (auto& stat: stats_) {
-        stat->refresh();
-    }
-}
-
 int IntersectionScene::getNextId() const
 {
     return nextId_++;

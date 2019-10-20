@@ -46,7 +46,6 @@ public:
     void start(int msec = 10);
     void stop();
     void step();
-    void refresh();
     int getCurrentTime() const { return currentTime_; }
 
     PathItem* addCarPath(const PainterPath &path,

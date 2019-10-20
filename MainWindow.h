@@ -41,7 +41,6 @@ private:
     Ui::MainWindow *ui;
     int nIntersections_ = 0;
     TimerWidget* timer_ = nullptr;
-    StatsDialog* statsDialog_ = nullptr;
 };
 
 #endif // MAINWINDOW_H

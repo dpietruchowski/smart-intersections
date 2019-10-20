@@ -1,16 +1,14 @@
 #ifndef CarVelocitystat_H
 #define CarVelocitystat_H
 
-#include "ByStepStat.h"
+#include "Stat.h"
 
-class CarVelocityStat: public ByStepStat
+class CarVelocityStat: public Stat
 {
 public:
     CarVelocityStat();
 
     void visit(const CarItem& car, int currentTime) override;
-    void clear() override;
-    const char* getName() const override { return "Velocity"; }
 };
 
 #endif // CarVelocitystat_H

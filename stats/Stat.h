@@ -13,14 +13,14 @@ public:
     Stat() = default;
     virtual ~Stat() = default;
 
-    virtual QChart* getChart() { return nullptr; }
-    virtual QAbstractItemModel* getModel() { return nullptr; }
-
+    void save() const;
+    void clear()
+;
     virtual void visit(const CarItem&, int /*currentTime*/) {}
     virtual void visit(const PathItem&, int /*currentTime*/) {}
-    virtual void clear() = 0;
-    virtual void refresh() = 0;
-    virtual const char* getName() const = 0;
+
+protected:
+    std::map<int, std::map<int, QVariant>> data_;
 };
 
 #endif // stat_H
