@@ -62,9 +62,12 @@ void IntersectionScene::reset()
     std::sort(cars.begin(), cars.end(), [](const CarItem* a, const CarItem* b) {
         return a->getDistance() > b->getDistance();
     });
-    for (auto* car: cars) {
-        auto& agent = agents_.emplace_back(std::make_unique<CarTimeAgent1>(car));
-        agent->findCollisionPaths();
+
+    if (checkAttribute(CarAgents)) {
+        for (auto* car: cars) {
+            auto& agent = agents_.emplace_back(std::make_unique<CarTimeAgent1>(car));
+            agent->findCollisionPaths();
+        }
     }
 
     for (auto& agent: agents_) {
@@ -153,6 +156,9 @@ bool IntersectionScene::load(QXmlStreamReader& xmlStream)
     if (xmlStream.attributes().hasAttribute("collision-area-block"))
         attributes_ |= CollisionAreaBlock;
 
+    if (xmlStream.attributes().hasAttribute("car-agents"))
+        attributes_ |= CarAgents;
+
     setSceneRect(x, y, w, h);
 
     auto loadGraphicsItems = [this] (QXmlStreamReader& xmlStream, Item itemClass) {
@@ -208,6 +214,8 @@ void IntersectionScene::save(QXmlStreamWriter& xmlStream) const
         xmlStream.writeAttribute("car-path-queue", "");
     if (checkAttribute(CollisionAreaBlock))
         xmlStream.writeAttribute("collision-area-block", "");
+    if (checkAttribute(CarAgents))
+        xmlStream.writeAttribute("car-agents", "");
 
     xmlStream.writeStartElement("roads");
     for (PathItem* pathItem: getSortedItems<PathItem>()) {

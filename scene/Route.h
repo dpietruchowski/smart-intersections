@@ -28,6 +28,7 @@ public:
 
     qreal getLength() const;
     std::pair<PathItem*, qreal> getPathAtDistance(qreal distance) const;
+    PathItem* getNextPath(qreal currentDistance) const;
 
     std::vector<CollisionPath> getCollisionPaths() const;
 private:

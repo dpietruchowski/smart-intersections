@@ -145,12 +145,7 @@ void CarItem::setRoute(Route* route)
 
 PathItem* CarItem::getNextPath()
 {
-    if (!route_)
-        return nullptr;
-    if (routeIter_ == route_->end())
-        return nullptr;
-
-    return *routeIter_++;
+    return route_->getNextPath(getRouteDistance());
 }
 
 void CarItem::moveToRouteDistance(qreal routeDistance)

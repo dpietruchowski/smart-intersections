@@ -31,7 +31,8 @@ public:
     enum Attribute {
         NoAttribute = 0x0000,
         CarPathQueue = 0x0001,
-        CollisionAreaBlock = 0x0002
+        CollisionAreaBlock = 0x0002,
+        CarAgents = 0x0004
     };
     using Agents = std::vector<std::unique_ptr<CarAgent>>;
     using Stats = std::vector<std::unique_ptr<Stat>>;

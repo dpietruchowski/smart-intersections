@@ -79,7 +79,6 @@ private:
     qreal distance_ = 0;
     qreal routeDistance_ = 0;
     Route* route_ = nullptr;
-    Route::Iterator routeIter_;
 };
 
 #endif // CARITEM_H

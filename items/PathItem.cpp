@@ -68,6 +68,16 @@ CollisionPath PathItem::getNextCollisionPath(qreal distance)
     return CollisionPath{};
 }
 
+qreal PathItem::getFirstCarDistance() const
+{
+    auto firstCar = cars_.begin();
+    if (firstCar == cars_.end())
+        return path_.length();
+
+    CarItem* car = *firstCar;
+    return car->getDistance(CarItem::Back);
+}
+
 void PathItem::onReset()
 {
     cars_.clear();
@@ -143,6 +153,17 @@ void PathItem::onPreStep()
         }
         (*iter)->setMaxVelocity(vMax);
     }
+
+    auto lastCar = cars_.rbegin();
+    if (lastCar == cars_.rend())
+        return;
+
+    PathItem* path = (*lastCar)->getNextPath();
+    if (!path)
+        return;
+
+    qreal freeDistance = path->getFirstCarDistance() + (path_.length() - (*lastCar)->getDistance(CarItem::Front) - 2);
+    (*lastCar)->limitCarVelocity(freeDistance);
 }
 
 void PathItem::onStep(int currTime)
@@ -219,7 +240,7 @@ void PathItem::clearCars()
     cars_.clear();
 }
 
-std::pair<QPointF, qreal> PathItem::transformAtCar(const CarItem* car)
+std::pair<QPointF, qreal> PathItem::transformAtCar(const CarItem* car) const
 {
     QPainterPath _path = path();
     qreal percent = _path.percentAtLength(car->getDistance());

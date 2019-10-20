@@ -24,6 +24,8 @@ public:
     CollisionPath getNextCollisionPath(qreal distance);
     std::vector<CollisionPath> getCollisionPaths() const { return collisionPaths_; }
 
+    qreal getFirstCarDistance() const;
+
     void addCar(CarItem* car);
     void removeCar(CarItem* car);
 
@@ -44,7 +46,7 @@ protected:
 
 private:
     void clearCars();
-    std::pair<QPointF, qreal> transformAtCar(const CarItem* car);
+    std::pair<QPointF, qreal> transformAtCar(const CarItem* car) const;
     qreal percentAtCar(const CarItem* car);
     QPointF pointAtDistance(qreal distance);
     void updateCar(CarItem* car);

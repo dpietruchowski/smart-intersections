@@ -88,6 +88,22 @@ std::pair<PathItem*, qreal> Route::getPathAtDistance(qreal distance) const
     return std::make_pair(desiredPath, distance);
 }
 
+PathItem* Route::getNextPath(qreal currentDistance) const
+{
+    auto path = getPathAtDistance(currentDistance);
+    if (!path.first)
+        return nullptr;
+
+    auto nextPath = std::find(paths_.begin(), paths_.end(), path.first);
+    if (nextPath == paths_.end())
+        return nullptr;
+    nextPath = std::next(nextPath);
+    if (nextPath == paths_.end())
+        return nullptr;
+
+    return *nextPath;
+}
+
 std::vector<CollisionPath> Route::getCollisionPaths() const
 {
     std::vector<CollisionPath> collisionPaths;
