@@ -10,8 +10,8 @@
 namespace {
 
 const QPolygonF carShape = QPolygonF({
-    QPointF{12, -23}, QPointF{12, 18}, QPointF{10, 23},
-    QPointF{-10, 23}, QPointF{-12, 18}, QPointF{-12, -23}
+    QPointF{10, -23}, QPointF{10, 18}, QPointF{8, 23},
+    QPointF{-8, 23}, QPointF{-10, 18}, QPointF{-10, -23}
 });
 
 }
@@ -57,7 +57,7 @@ void CarItem::setInside(CollisionAreaItem* area, bool inside)
     if (isInside()) {
         setBrush(QColor(91, 129, 213, 155));
     } else {
-        setBrush(QBrush());
+        setBrush(QBrush(Qt::white));
     }
     update();
 }
@@ -189,7 +189,7 @@ void CarItem::onReset()
 {
     routeDistance_ = 0;
     moveToRouteDistance(getDefaultDistance());
-    setBrush(QBrush());
+    setBrush(QBrush(Qt::white));
 }
 
 qreal CarItem::getDistance(qreal distance, CarItem::CarPart part) const

@@ -6,13 +6,28 @@
 #include <IntersectionScene.h>
 #include <QDebug>
 
+#include <cstdlib>
+
+namespace
+{
+
+QColor randomColor()
+{
+    QColor color;
+    color.setRed(std::rand()%256);
+    color.setBlue(std::rand()%256);
+    color.setGreen(std::rand()%256);
+    return color;
+}
+
+}
+
 BaseItem::BaseItem(int id): id_(id)
 {
 
 }
 
 BaseItem::~BaseItem() {
-    qDebug() << "destructor" << id_;
 }
 
 void BaseItem::reset()
@@ -33,16 +48,18 @@ bool BaseItem::load(QXmlStreamReader& xmlStream)
 
     int id = xmlStream.attributes().value("id").toInt();
     setId(id);
-
+    QColor color("black");
     QAbstractGraphicsShapeItem* thisItem = getItem<QAbstractGraphicsShapeItem>();
     if (xmlStream.attributes().hasAttribute("color") && thisItem) {
-        QColor color = xmlStream.attributes().value("color").toString();
-        QPen p = thisItem->pen();
-        p.setWidth(2);
-        p.setColor(color);
-        thisItem->setPen(p);
-        pen_ = p;
+        color = xmlStream.attributes().value("color").toString();
+    } else {
+        color = randomColor();
     }
+    QPen p = thisItem->pen();
+    p.setWidth(2);
+    p.setColor(color);
+    thisItem->setPen(p);
+    pen_ = p;
     return loadItem(xmlStream);
 }
 
