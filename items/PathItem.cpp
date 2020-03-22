@@ -20,11 +20,11 @@ PathItem::PathItem(int id, QGraphicsItem* parent): QGraphicsPathItem(parent), Ba
     path.lineTo(10, 10);
     setPath(path);
     setToolTip(QString::number(id));
+    text_ = new QGraphicsSimpleTextItem(QString::number(id), this);
 }
 
 PathItem::PathItem(QGraphicsItem* parent): PathItem(-1, parent)
 {
-
 }
 
 PathItem::~PathItem()
@@ -175,7 +175,7 @@ void PathItem::onPreStep()
     if (!car)
         return;
 
-    qreal distance = car->getRouteDistance(CarItem::Back) - (*lastCar)->getRouteDistance(CarItem::Front) - 2;
+    qreal distance = path().length() - (*lastCar)->getRouteDistance(CarItem::Front) + car->getDistance(CarItem::Back) - 2;
     (*lastCar)->limitCarVelocity(distance);
 }
 
@@ -291,7 +291,7 @@ bool PathItem::loadItem(QXmlStreamReader& xmlStream)
         vMax_ = MAXIMUM_VELOCITY;
 
     PainterPath path;
-    path.load(xmlStream);
+    path.load({x, y}, xmlStream);
     setPath(path);
     return true;
 }
@@ -303,5 +303,5 @@ void PathItem::saveItem(QXmlStreamWriter& xmlStream) const
     xmlStream.writeAttribute("y", QString::number(point.y()));
     if (vMax_ < MAXIMUM_VELOCITY)
         xmlStream.writeAttribute("v-max", QString::number(vMax_));
-    path_.save(xmlStream);
+    path_.save(point, xmlStream);
 }

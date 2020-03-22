@@ -28,7 +28,7 @@ PainterPath& PainterPath::operator=(const PainterPath&& other)
     return *this;
 }
 
-bool PainterPath::load(QXmlStreamReader& xmlStream)
+bool PainterPath::load(QPointF offset, QXmlStreamReader& xmlStream)
 {
     if (!xmlStream.isStartElement() ||
             xmlStream.name() != "path")
@@ -38,7 +38,7 @@ bool PainterPath::load(QXmlStreamReader& xmlStream)
         qWarning("You are loading non empty path");
     while (xmlStream.readNextStartElement()) {
         QString name = xmlStream.name().toString();
-        Points points = loadPoints(xmlStream);
+        Points points = loadPoints(offset, xmlStream);
         if (name == "line-to") {
             if (points.size() != 1)
                 qWarning("Line to - wrong number of points");
@@ -60,7 +60,7 @@ bool PainterPath::load(QXmlStreamReader& xmlStream)
     return true;
 }
 
-void PainterPath::save(QXmlStreamWriter& xmlStream) const
+void PainterPath::save(QPointF offset, QXmlStreamWriter& xmlStream) const
 {
     for(auto command: commands_) {
         QString commandElement;
@@ -76,6 +76,8 @@ void PainterPath::save(QXmlStreamWriter& xmlStream) const
         xmlStream.writeStartElement(commandElement);
         for(auto point: command.second) {
             xmlStream.writeStartElement("point");
+            point.setX(point.x() + offset.x());
+            point.setY(point.y() + offset.y());
             xmlStream.writeAttribute("x", QString::number(point.x()));
             xmlStream.writeAttribute("y", QString::number(point.y()));
             xmlStream.writeEndElement();
@@ -84,14 +86,14 @@ void PainterPath::save(QXmlStreamWriter& xmlStream) const
     }
 }
 
-PainterPath::Points PainterPath::loadPoints(QXmlStreamReader& xmlStream)
+PainterPath::Points PainterPath::loadPoints(QPointF offset, QXmlStreamReader& xmlStream)
 {
     Points points = {};
     while (xmlStream.readNextStartElement()) {
         if (xmlStream.name() == "point") {
             qreal x = xmlStream.attributes().value("x").toDouble();
             qreal y = xmlStream.attributes().value("y").toDouble();
-            points.push_back({x, y});
+            points.push_back({x - offset.x(), y - offset.y()});
         }
         xmlStream.skipCurrentElement();
     }

@@ -22,8 +22,8 @@ public:
         QuadTo
     };
 
-    bool load(QXmlStreamReader& xmlStream);
-    void save(QXmlStreamWriter& xmlStream) const;
+    bool load(QPointF offset, QXmlStreamReader& xmlStream);
+    void save(QPointF offset, QXmlStreamWriter& xmlStream) const;
 
     void lineTo(const QPointF &p);
     void quadTo(const QPointF &ctrlPt, const QPointF &endPt);
@@ -35,7 +35,7 @@ public:
 
 private:
     using Points = std::vector<QPointF>;
-    Points loadPoints(QXmlStreamReader& xmlStream);
+    Points loadPoints(QPointF offset, QXmlStreamReader& xmlStream);
 
 private:
     using Commands = std::list<std::pair<Command, Points>>;
