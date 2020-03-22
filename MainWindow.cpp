@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QSpinBox>
 #include <QActionGroup>
+#include <QClipboard>
 
 #include "scene/IntersectionScene.h"
 
@@ -60,12 +61,6 @@ private:
     std::map<IntersectionWidget::View, QAction*> actions_;
 };
 
-MainWindow& MainWindow::Get()
-{
-    static MainWindow mainWindow;
-    return mainWindow;
-}
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -74,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mdiArea->setViewMode(QMdiArea::TabbedView);
 
     auto *spinBox = new QSpinBox(this);
-    spinBox->setRange(10, 200);
+    spinBox->setRange(10, 1000);
     spinBox->setValue(20);
     ui->toolBar->addWidget(spinBox);
     timer_ = new TimerWidget(this);
@@ -234,6 +229,9 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event)
         case QEvent::GraphicsSceneMouseMove:
             mouseSceneMoveEvent(static_cast<QGraphicsSceneMouseEvent *>(event));
             break;
+        case QEvent::GraphicsSceneMouseDoubleClick:
+            mouseSceneDoubleClickEvent(static_cast<QGraphicsSceneMouseEvent *>(event));
+            break;
         default:
             break;
     }
@@ -245,6 +243,14 @@ void MainWindow::mouseSceneMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
     auto pos = mouseEvent->scenePos();
     QString text = QString("(%1, %2)").arg(pos.x()).arg(pos.y());
     ui->statusBar->showMessage(text);
+}
+
+void MainWindow::mouseSceneDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent)
+{
+    auto pos = mouseEvent->scenePos();
+    QClipboard *clipboard = QApplication::clipboard();
+    QString text = QString("x=\"%1\" y=\"%2\"").arg(pos.x()).arg(pos.y());
+    clipboard->setText(text);
 }
 
 int MainWindow::getNewId()

@@ -18,8 +18,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    static MainWindow& Get();
-
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
@@ -31,6 +29,7 @@ public:
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
     void mouseSceneMoveEvent(QGraphicsSceneMouseEvent* mouseEvent);
+    void mouseSceneDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent);
 
 private:
 
