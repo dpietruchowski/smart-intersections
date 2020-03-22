@@ -159,7 +159,17 @@ bool IntersectionScene::load(QXmlStreamReader& xmlStream)
     if (xmlStream.attributes().hasAttribute("car-agents"))
         attributes_ |= CarAgents;
 
-    setSceneRect(x, y, w, h);
+    if (xmlStream.attributes().hasAttribute("background")) {
+        QString path = xmlStream.attributes().value("background").toString();
+        background_.load(path);
+        backgroundPath_ = path;
+    }
+
+    if (!background_.isNull()) {
+        setSceneRect(background_.rect());
+    } else {
+        setSceneRect(x, y, w, h);
+    }
 
     auto loadGraphicsItems = [this] (QXmlStreamReader& xmlStream, Item itemClass) {
         while (xmlStream.readNextStartElement()) {
@@ -216,6 +226,8 @@ void IntersectionScene::save(QXmlStreamWriter& xmlStream) const
         xmlStream.writeAttribute("collision-area-block", "");
     if (checkAttribute(CarAgents))
         xmlStream.writeAttribute("car-agents", "");
+
+    xmlStream.writeAttribute("background", backgroundPath_);
 
     xmlStream.writeStartElement("roads");
     for (PathItem* pathItem: getSortedItems<PathItem>()) {
@@ -303,6 +315,10 @@ BaseItem* IntersectionScene::createItem(IntersectionScene::Item item) const
 
 void IntersectionScene::drawBackground(QPainter* painter, const QRectF& rect)
 {
+    if (!background_.isNull()) {
+        painter->drawPixmap(rect.topLeft(), background_, rect);
+    }
+
     int step = 10;
     painter->setPen(QPen(QColor(200, 200, 255, 125)));
     auto GetStart = [step](qreal edge) {

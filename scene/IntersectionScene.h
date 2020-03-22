@@ -98,6 +98,8 @@ private:
     int getNextId() const;
 
 private:
+    QString backgroundPath_;
+    QPixmap background_;
     QBasicTimer timer_;
     int currentTime_ = 0;
     std::map<int, Route> routes_;
