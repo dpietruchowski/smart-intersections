@@ -20,7 +20,10 @@ CollisionAreaItem::CollisionAreaItem(QGraphicsItem* parent): CollisionAreaItem(-
 
 bool CollisionAreaItem::containsGlobal(const QPointF point) const
 {
-    return contains(point - pos());
+    qreal angle = -rotation();
+    QTransform t = QTransform().rotate( angle );
+    QPointF rotatedPoint =  t.map( point - pos() );
+    return contains(rotatedPoint);
 }
 
 void CollisionAreaItem::setOccupied(CarItem* car, bool occupied)
@@ -100,6 +103,9 @@ bool CollisionAreaItem::loadItem(QXmlStreamReader& xmlStream)
     qreal w = xmlStream.attributes().value("w").toDouble();
     qreal h = xmlStream.attributes().value("h").toDouble();
     setRect(0, 0, w, h);
+
+    int r = xmlStream.attributes().value("r").toInt();
+    setRotation(r);
 
     xmlStream.skipCurrentElement();
 
