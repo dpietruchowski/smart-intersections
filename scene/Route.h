@@ -6,6 +6,7 @@
 #include <QXmlStreamWriter>
 
 class PathItem;
+class CarItem;
 class IntersectionScene;
 class CollisionPath;
 
@@ -29,6 +30,7 @@ public:
     qreal getLength() const;
     std::pair<PathItem*, qreal> getPathAtDistance(qreal distance) const;
     PathItem* getNextPath(qreal currentDistance) const;
+    CarItem* getNextCar(qreal distance) const;
 
     std::vector<CollisionPath> getCollisionPaths() const;
 private:

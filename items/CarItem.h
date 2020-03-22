@@ -48,6 +48,7 @@ public:
 
     void setRoute(Route* route);
     PathItem* getNextPath();
+    CarItem* getNextCar() const;
     void moveToRouteDistance(qreal routeDistance);
     void moveToNextPath();
 

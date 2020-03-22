@@ -148,6 +148,11 @@ PathItem* CarItem::getNextPath()
     return route_->getNextPath(getRouteDistance());
 }
 
+CarItem* CarItem::getNextCar() const
+{
+    return route_->getNextCar(getRouteDistance() + 1);
+}
+
 void CarItem::moveToRouteDistance(qreal routeDistance)
 {
     if (!route_)

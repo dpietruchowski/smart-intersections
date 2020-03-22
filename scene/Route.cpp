@@ -2,6 +2,7 @@
 
 #include "IntersectionScene.h"
 #include "PathItem.h"
+#include "CarItem.h"
 
 Route::Route(int id, IntersectionScene& intersection)
     : id_(id), intersection_(intersection)
@@ -102,6 +103,26 @@ PathItem* Route::getNextPath(qreal currentDistance) const
         return nullptr;
 
     return *nextPath;
+}
+
+CarItem* Route::getNextCar(qreal distance) const
+{
+    auto path = getPathAtDistance(distance);
+
+    if (!path.first)
+        return nullptr;
+
+    qreal pathDistance = path.second;
+    auto nextPath = std::find(paths_.begin(), paths_.end(), path.first);
+    while (nextPath != paths_.end()) {
+        CarItem* car = (*nextPath)->getNextCar(pathDistance);
+        if (car)
+            return car;
+        nextPath = std::next(nextPath);
+        pathDistance = 0;
+    }
+
+    return nullptr;
 }
 
 std::vector<CollisionPath> Route::getCollisionPaths() const

@@ -25,6 +25,7 @@ public:
     std::vector<CollisionPath> getCollisionPaths() const { return collisionPaths_; }
 
     qreal getFirstCarDistance() const;
+    CarItem* getNextCar(qreal distance);
 
     void addCar(CarItem* car);
     void removeCar(CarItem* car);

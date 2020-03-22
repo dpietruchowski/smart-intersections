@@ -78,6 +78,19 @@ qreal PathItem::getFirstCarDistance() const
     return car->getDistance(CarItem::Back);
 }
 
+CarItem* PathItem::getNextCar(qreal distance)
+{
+    auto ret = std::find_if(cars_.begin(), cars_.end(),
+                            [distance] (CarItem* car) {
+        return car->getDistance() > distance;
+    });
+
+    if (ret != cars_.end())
+        return *ret;
+
+    return nullptr;
+}
+
 void PathItem::onReset()
 {
     cars_.clear();
@@ -158,12 +171,12 @@ void PathItem::onPreStep()
     if (lastCar == cars_.rend())
         return;
 
-    PathItem* path = (*lastCar)->getNextPath();
-    if (!path)
+    CarItem* car = (*lastCar)->getNextCar();
+    if (!car)
         return;
 
-    qreal freeDistance = path->getFirstCarDistance() + (path_.length() - (*lastCar)->getDistance(CarItem::Front) - 2);
-    (*lastCar)->limitCarVelocity(freeDistance);
+    qreal distance = car->getRouteDistance(CarItem::Back) - (*lastCar)->getRouteDistance(CarItem::Front) - 2;
+    (*lastCar)->limitCarVelocity(distance);
 }
 
 void PathItem::onStep(int currTime)
