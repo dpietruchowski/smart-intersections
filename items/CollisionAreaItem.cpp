@@ -121,4 +121,6 @@ void CollisionAreaItem::saveItem(QXmlStreamWriter& xmlStream) const
     QRectF r = rect();
     xmlStream.writeAttribute("w", QString::number(r.width()));
     xmlStream.writeAttribute("h", QString::number(r.height()));
+
+    xmlStream.writeAttribute("r", QString::number(rotation()));
 }
