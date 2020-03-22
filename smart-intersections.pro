@@ -48,6 +48,7 @@ SOURCES += \
         stats/CarVelocityStat.cpp \
         stats/Stat.cpp \
         ui/CarTable.cpp \
+        ui/GraphicsViewFilter.cpp \
         ui/IntersectionWidget.cpp \
         ui/TimelineWidget.cpp \
         ui/TimerWidget.cpp \
@@ -77,6 +78,7 @@ HEADERS += \
         stats/CarVelocityStat.h \
         stats/Stat.h \
         ui/CarTable.h \
+        ui/GraphicsViewFilter.h \
         ui/IntersectionWidget.h \
         ui/TimelineWidget.h \
         ui/TimerWidget.h \
