@@ -6,6 +6,7 @@
 #include <QStackedLayout>
 #include <QDebug>
 #include <QLabel>
+#include "GraphicsViewFilter.h"
 #include "TimespanRegisterWidget.h"
 #include "MainWindow.h"
 #include "CollisionAreaItem.h"
@@ -57,7 +58,8 @@ IntersectionWidget::IntersectionWidget(const QString& name, QWidget *parent) :
     auto initGraphicsView = [this] (QGraphicsView* view) {
         view->setScene(&scene_);
         view->setMouseTracking(true);
-        view->scale(1, -1);
+        auto* f = new GraphicsViewFilter(view);
+        view->setDragMode(QGraphicsView::ScrollHandDrag);
     };
 
     initGraphicsView(ui->graphicsView);
