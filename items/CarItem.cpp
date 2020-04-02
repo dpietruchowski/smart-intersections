@@ -143,6 +143,11 @@ void CarItem::setRoute(Route* route)
     route_ = route;
 }
 
+Route* CarItem::getRoute()
+{
+    return route_;
+}
+
 PathItem* CarItem::getNextPath()
 {
     return route_->getNextPath(getRouteDistance());
@@ -195,9 +200,9 @@ void CarItem::onReset()
 qreal CarItem::getDistance(qreal distance, CarItem::CarPart part) const
 {
     switch (part) {
-        case CarPart::Front: return distance + 30;
+        case CarPart::Front: return distance + 25;
         case CarPart::Center: return distance;
-        case CarPart::Back: return distance - 30;
+        case CarPart::Back: return distance - 25;
     }
     return distance;
 }

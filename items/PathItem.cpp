@@ -175,7 +175,16 @@ void PathItem::onPreStep()
     if (!car)
         return;
 
-    qreal distance = path().length() - (*lastCar)->getRouteDistance(CarItem::Front) + car->getDistance(CarItem::Back) - 2;
+    Route* route = (*lastCar)->getRoute();
+    const PathItem* nextPath = route->getNextCommonPath((*lastCar)->getRouteDistance(),
+                                                        car->getRoute());
+    if (!nextPath)
+        return;
+
+    qreal intersecionDistance = car->getRoute()->getLengthAt(nextPath, 0);
+    qreal toIntersection = path().length() - (*lastCar)->getDistance(CarItem::Front);
+    qreal fromIntersection = car->getRouteDistance(CarItem::Back) - intersecionDistance;
+    qreal distance = toIntersection + fromIntersection - 2;
     (*lastCar)->limitCarVelocity(distance);
 }
 
@@ -189,6 +198,8 @@ void PathItem::onStep(int currTime)
         auto* car = *iter;
         auto collisionPath = getNextCollisionPath(car->getDistance(CarItem::Front));
         if (collisionPath.isValid()) {
+            qDebug() << collisionPath.getArea()->isOccupied();
+            qDebug() << intersection->checkAttribute(IntersectionScene::CollisionAreaBlock);
             if (collisionPath.getArea()->isOccupied()
                     && intersection->checkAttribute(IntersectionScene::CollisionAreaBlock)) {
                 qreal vMax = collisionPath.getInDistance() - car->getDistance(CarItem::Front) - 0.1;

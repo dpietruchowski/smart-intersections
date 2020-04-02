@@ -66,6 +66,35 @@ int Route::getId() const
     return id_;
 }
 
+const PathItem* Route::getNextCommonPath(qreal distance, const Route* route) const
+{
+    qreal realDistance = 0;
+    for(const PathItem* thispath: paths_) {
+        for(const PathItem* otherpath: route->paths_) {
+            if (thispath == otherpath && realDistance > distance)
+                return thispath;
+        }
+        realDistance += thispath->path().length();
+    }
+    return nullptr;
+}
+
+qreal Route::getLengthAt(const PathItem* path, qreal pathLength) const
+{
+    bool found =false;
+    qreal distance = 0;
+    for(const PathItem* p: paths_) {
+        if (p == path) {
+            found = true;
+            break;
+        }
+        distance += p->path().length();
+    }
+    if (!found)
+        return 0;
+    return distance + pathLength;
+}
+
 qreal Route::getLength() const
 {
     qreal length = 0;
@@ -123,6 +152,11 @@ CarItem* Route::getNextCar(qreal distance) const
     }
 
     return nullptr;
+}
+
+CollisionPath Route::getNextCollisionPath(qreal distance)
+{
+    return CollisionPath();
 }
 
 std::vector<CollisionPath> Route::getCollisionPaths() const

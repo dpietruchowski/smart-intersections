@@ -27,10 +27,14 @@ public:
 
     int getId() const;
 
+    const PathItem* getNextCommonPath(qreal distance, const Route* route) const;
+    qreal getIntersectionLength(qreal distance, const Route* route) const;
+    qreal getLengthAt(const PathItem* path, qreal pathLength) const;
     qreal getLength() const;
     std::pair<PathItem*, qreal> getPathAtDistance(qreal distance) const;
     PathItem* getNextPath(qreal currentDistance) const;
     CarItem* getNextCar(qreal distance) const;
+    CollisionPath getNextCollisionPath(qreal distance);
 
     std::vector<CollisionPath> getCollisionPaths() const;
 private:

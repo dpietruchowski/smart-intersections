@@ -47,6 +47,7 @@ public:
     qreal getDefaultDistance() const;
 
     void setRoute(Route* route);
+    Route* getRoute();
     PathItem* getNextPath();
     CarItem* getNextCar() const;
     void moveToRouteDistance(qreal routeDistance);
