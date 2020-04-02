@@ -217,10 +217,12 @@ void IntersectionWidget::save()
 
 void IntersectionWidget::load()
 {
+    qApp->setOverrideCursor(Qt::WaitCursor);
     scene_.stop();
     QXmlStreamReader r(ui->textEdit->toPlainText());
     scene_.load(r);
     scene_.reset();
+    qApp->restoreOverrideCursor();
 }
 
 bool IntersectionWidget::isSaved() const
